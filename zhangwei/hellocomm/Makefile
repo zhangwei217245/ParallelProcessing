@@ -1,7 +1,7 @@
 CC=mpicc
 CFLAGS=-i_dynamic
-OBJ=helloworld.out
-SRC=mpi_hello.c
+OBJ=hellocomm.out
+SRC=mpi_hellocomm.c
 EXEC=mpirun
 
 

@@ -1,5 +1,5 @@
 * Clean Your distribution
-sss
+
 `make clean`
 
 * Build Your Executables

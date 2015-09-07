@@ -11,12 +11,13 @@ ${OBJ}: ${SRC}
 
 .PHONY: run
 run:
-	${EXEC} -n ${NUM} ${OBJ}
+	@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ}
 
 .PHONY: clean
 clean:
 	-rm -rf ${OBJ}
 	-rm -rf *.btr
+	-rm -rf output/
 
 .PHONY: all
 all:	clean ${OBJ} run

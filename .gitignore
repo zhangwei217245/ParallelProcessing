@@ -33,3 +33,6 @@
 
 # btr files
 *.btr
+
+# output files
+output/

@@ -15,7 +15,8 @@ run:
 
 .PHONY: clean
 clean:
-	rm -rf ${OBJ}
+	-rm -rf ${OBJ}
+	-rm -rf *.btr
 
 .PHONY: all
 all:	clean ${OBJ} run

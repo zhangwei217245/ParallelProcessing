@@ -1,6 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <mpi.h>
+
+char * getTimestamp(){
+	static char buff[20];
+	time_t now = time(NULL);
+	strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));	
+	return buff;
+}
+
+char * getTimeString(){
+	static char buff[20];
+	time_t now = time(NULL);
+	strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));	
+	return buff;
+}
 
 int main (int argc, char *argv[])
 {
@@ -58,7 +73,7 @@ int main (int argc, char *argv[])
 		for (k = 0; k < row_count_per_process; k++) {
 			int row_num = world_rank * row_count_per_process + k;
 			MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
-			//printf("row %d received by rank %d\n", row_num, world_rank);
+			printf("%s : row %d received by rank #%d\n", getTimestamp(), row_num, world_rank);
 		}		
 		// Once receiving channel is working, generating array while sending it.
 		if (world_rank==0) 
@@ -76,12 +91,13 @@ int main (int argc, char *argv[])
 			// ******** Overlapping 1 here, Generating while Sending.
 			while(prank < world_size)
 			{
-				// fill row with random numbers within 0-99.
+				// fill row with random numbers.
 				for (col=0; col<1024; col++) {
-					array[row][col] = rand();
+					int random = rand();
+					array[row][col] = random * (random % 4);
 				}
 				MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, &requestNull);	
-				//printf("row %d sent to prank %d\n", row, prank);
+				printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), row, prank, world_rank);
 				row++;
 				if (row % row_count_per_process == 0) {
 					prank++;
@@ -105,7 +121,7 @@ int main (int argc, char *argv[])
 			}
 			int row_num = world_rank * row_count_per_process + index;
 			double avg = (double)sum/1024;
-			printf("Process #%d (%s) : average of row #%d = %f\n", world_rank, processor_name, row_num, avg);
+			printf("%s : Process #%d (%s) : average of row #%d = %f\n", getTimestamp(), world_rank, processor_name, row_num, avg);
 			calculated++;
 		}
 		
@@ -115,3 +131,4 @@ int main (int argc, char *argv[])
 		free(requestList);
 		return 0;
 }
+

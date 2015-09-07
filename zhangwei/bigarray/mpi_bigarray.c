@@ -57,10 +57,16 @@ void generatingWhileSending(int row_count_per_process, int world_size, int world
 			int random = rand();
 			array[row][col] = row;//random * (random % 4);
 		}
-		MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, requestNull);
-		printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), row, prank, world_rank);
+		//MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, requestNull);
+		//printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), row, prank, world_rank);
 		row++;
 		if (row % row_count_per_process == 0) {
+			int s_back = row - row_count_per_process;
+			for ( ; s_back < row; s_back++) {
+				MPI_Isend(&array[s_back], 1024, MPI_INT, prank, s_back, MPI_COMM_WORLD, requestNull);
+				printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), s_back, prank, world_rank);
+	
+			}
 			prank++;
 		}
 	}

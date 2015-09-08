@@ -3,10 +3,18 @@
 #include <time.h>
 #include <mpi.h>
 
+double get_avg(int len, int *arr){
+	int sum = 0;
+	int i;
+	for (i = 0; i < 1024; i++) {
+		sum = sum + arr[i];
+	}
+	return (double)sum/1024;
+}
 char * getTimestamp(){
 	static char buff[20];
-	time_t now = time(NULL);
-	strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));	
+	unsigned long now = time(NULL);
+	sprintf(buff, "%ld", now);	
 	return buff;
 }
 
@@ -29,6 +37,31 @@ int sanityCheck(int world_size)
 	}
 	return size_found;
 }
+
+int parseArguments(int argc, char *argv[], int *send_mode, int *wait_mode)
+{
+	char a_wait[]="-wait";
+	char a_send[]="-send";
+	int i=0;
+	for ( ; i < argc; i++)
+	{
+		if (strncmp(a_wait, argv[i], 5) == 0 && (i+1) < argc)
+		{
+			*wait_mode = atoi(argv[i+1]);
+			if (*wait_mode < 0 || *wait_mode >1 ){
+				return -1;
+			}	
+		}
+		if (strncmp(a_send, argv[i], 5) == 0 && (i+1) < argc)
+		{
+			*send_mode = atoi(argv[i+1]);
+			if (*send_mode < 0 || *send_mode > 1){
+				return -1;
+			}
+		}
+	}
+	return 0;
+}
 void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MPI_Request *requestList)
 {
 	int k;
@@ -37,7 +70,7 @@ void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MP
 		MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
 	}		
 }
-void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull)
+void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull, int send_mode)
 {
 	int array[1200][1024];
 	// ******** Generating the Array. **********
@@ -54,18 +87,24 @@ void generatingWhileSending(int row_count_per_process, int world_size, int world
 	{
 		// fill row with random numbers.
 		for (col=0; col<1024; col++) {
-			int random = rand();
-			array[row][col] = row;//random * (random % 4);
+			int random = rand() % (row+1);
+			array[row][col] = 
+					abs(random);
+					//row;
 		}
-		//MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, requestNull);
-		//printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), row, prank, world_rank);
+		if (send_mode == 0) {
+			MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, requestNull);
+			printf("%s : row %d sent to prank #%d by rank #%d right after it is generated.\n", getTimestamp(), row, prank, world_rank);
+		}
 		row++;
 		if (row % row_count_per_process == 0) {
-			int s_back = row - row_count_per_process;
-			for ( ; s_back < row; s_back++) {
-				MPI_Isend(&array[s_back], 1024, MPI_INT, prank, s_back, MPI_COMM_WORLD, requestNull);
-				printf("%s : row %d sent to prank #%d by rank #%d\n", getTimestamp(), s_back, prank, world_rank);
+			if (send_mode != 0) {
+				int s_back = row - row_count_per_process;
+				for ( ; s_back < row; s_back++) {
+					MPI_Isend(&array[s_back], 1024, MPI_INT, prank, s_back, MPI_COMM_WORLD, requestNull);
+					printf("%s : row %d sent to prank #%d by rank #%d in batch mode.\n", getTimestamp(), s_back, prank, world_rank);
 	
+				}
 			}
 			prank++;
 		}
@@ -89,14 +128,9 @@ void calculateWithMPI_Test(int row_count_per_process, MPI_Request *requestList, 
 			if ( flag > 0 ) {
 				requestList[index] = NULL;
 				// Calculating Average
-				int sum = 0;
-				int i;
-				for (i = 0; i < 1024; i++) {
-					sum = sum + msgbuf[index][i];
-				}
+				double avg = get_avg(1024, msgbuf[index]);
 				int row_num = world_rank * row_count_per_process + index;
-				double avg = (double)sum/1024;
-				printf("%s : Process #%d (%s) : average of row #%d = %f\n", getTimestamp(), world_rank, processor_name, row_num, avg);
+				printf("%s : Process #%d (%s) : average of row #%d = %f (MPI_Test)\n", getTimestamp(), world_rank, processor_name, row_num, avg);
 				calculated++;
 			}
 		}
@@ -111,28 +145,27 @@ void calculateWithMPI_Waitany(int row_count_per_process, MPI_Request *requestLis
 		int index;
 		MPI_Waitany(row_count_per_process, requestList, &index, status);
 		// Calculating Average
-		int sum = 0;
-		int i;
-		for (i = 0; i < 1024; i++) {
-			sum = sum + msgbuf[index][i];
-		}
+		double avg = get_avg(1024, msgbuf[index]);
 		int row_num = world_rank * row_count_per_process + index;
-		double avg = (double)sum/1024;
-		printf("%s : Process #%d (%s) : average of row #%d = %f\n", getTimestamp(), world_rank, processor_name, row_num, avg);
+		printf("%s : Process #%d (%s) : average of row #%d = %f (MPI_Waitany)\n", getTimestamp(), world_rank, processor_name, row_num, avg);
 		calculated++;
 	}
 }
 
 
 
-
 int main (int argc, char *argv[])
 {
 	//Prepare message and other parameters for getting process-related information
+	int wait_mode=0; //0: calculate with MPI_Test; 1: calculate with MPI_Waitany
+	int send_mode=0; //0: send each row right after it is generated; 1: send rows for particular process after they are generated totally.
+
 	int world_size;
 	int world_rank;
+
 	char processor_name[MPI_MAX_PROCESSOR_NAME];
 	int name_len;
+
 	MPI_Status status;
 	MPI_Request *requestList, requestNull;
 
@@ -157,6 +190,18 @@ int main (int argc, char *argv[])
 		MPI_Finalize();
 		return 0;
 	}
+
+	//Parse arguments to decide wait mode and send mode.
+	if (parseArguments(argc, argv, &send_mode, &wait_mode) < 0)
+	{
+		if (world_rank == 0) {
+			printf("Arguments:\n wait : \n\t0: calculate with MPI_Test; \n\t1: calculate with MPI_Waitany.\n send : \n\t0: send each row right after it is generated; \n\t1: send rows for particular process after they are generated totally.\n");
+		}
+		MPI_Finalize();
+		return 0;
+	}
+
+
 	// ********** OPERATIONS START FROM HERE **********
 
 	int row_count_per_process = 1200/world_size;
@@ -175,12 +220,15 @@ int main (int argc, char *argv[])
 	if (world_rank==0) 
 	{
 		//generating while sending.
-		generatingWhileSending(row_count_per_process, world_size, world_rank, &requestNull);	
+		generatingWhileSending(row_count_per_process, world_size, world_rank, &requestNull, send_mode);	
 	} 
 
 	// ****** Calculating *******
-	//calculateWithMPI_Waitany(row_count_per_process, requestList, &status, msgbuf, world_rank, processor_name);
-	calculateWithMPI_Test(row_count_per_process, requestList, &status, msgbuf, world_rank, processor_name);	
+	if (wait_mode == 0) {
+		calculateWithMPI_Test(row_count_per_process, requestList, &status, msgbuf, world_rank, processor_name);	
+	} else {
+		calculateWithMPI_Waitany(row_count_per_process, requestList, &status, msgbuf, world_rank, processor_name);
+	}
 	// Finalize the MPI environment
 	MPI_Finalize();
 	free(requestList);

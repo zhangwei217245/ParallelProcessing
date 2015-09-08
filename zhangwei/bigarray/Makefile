@@ -11,7 +11,7 @@ ${OBJ}: ${SRC}
 
 .PHONY: run
 run:
-	@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ}
+	@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

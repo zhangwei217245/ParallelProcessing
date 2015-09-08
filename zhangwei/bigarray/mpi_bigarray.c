@@ -38,10 +38,11 @@ int sanityCheck(int world_size)
 	return size_found;
 }
 
-int parseArguments(int argc, char *argv[], int *send_mode, int *wait_mode)
+int parseArguments(int argc, char *argv[], int *send_mode, int *fill_mode, int *wait_mode)
 {
 	char a_wait[]="-wait";
 	char a_send[]="-send";
+	char a_fill[]="-fill";
 	int i=0;
 	for ( ; i < argc; i++)
 	{
@@ -59,6 +60,13 @@ int parseArguments(int argc, char *argv[], int *send_mode, int *wait_mode)
 				return -1;
 			}
 		}
+		if (strncmp(a_fill, argv[i], 5) == 0 && (i+1) < argc)
+		{
+			*fill_mode = atoi(argv[i+1]);
+			if (*fill_mode < 0 || *fill_mode > 2){
+				return -1;
+			}
+		}
 	}
 	return 0;
 }
@@ -70,7 +78,7 @@ void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MP
 		MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
 	}		
 }
-void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull, int send_mode)
+void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull, int send_mode, int fill_mode)
 {
 	int array[1200][1024];
 	// ******** Generating the Array. **********
@@ -87,10 +95,14 @@ void generatingWhileSending(int row_count_per_process, int world_size, int world
 	{
 		// fill row with random numbers.
 		for (col=0; col<1024; col++) {
-			int random = rand() % (row+1);
-			array[row][col] = 
-					abs(random);
-					//row;
+			int cell_content = rand() % (row+1);
+			if (fill_mode == 1){
+				cell_content = rand();
+			}
+			if (fill_mode == 2){
+				cell_content = row;
+			}
+			array[row][col] = cell_content; 
 		}
 		if (send_mode == 0) {
 			MPI_Isend(&array[row], 1024, MPI_INT, prank, row, MPI_COMM_WORLD, requestNull);
@@ -159,6 +171,7 @@ int main (int argc, char *argv[])
 	//Prepare message and other parameters for getting process-related information
 	int wait_mode=0; //0: calculate with MPI_Test; 1: calculate with MPI_Waitany
 	int send_mode=0; //0: send each row right after it is generated; 1: send rows for particular process after they are generated totally.
+	int fill_mode=0; //Fill the array with: 0 - random integer mod row_count+1; 1 - random integer; 2 - row_count. 	
 
 	int world_size;
 	int world_rank;
@@ -192,10 +205,10 @@ int main (int argc, char *argv[])
 	}
 
 	//Parse arguments to decide wait mode and send mode.
-	if (parseArguments(argc, argv, &send_mode, &wait_mode) < 0)
+	if (parseArguments(argc, argv, &send_mode, &fill_mode, &wait_mode) < 0)
 	{
 		if (world_rank == 0) {
-			printf("Arguments:\n wait : \n\t0: calculate with MPI_Test; \n\t1: calculate with MPI_Waitany.\n send : \n\t0: send each row right after it is generated; \n\t1: send rows for particular process after they are generated totally.\n");
+			printf("Arguments:\n -wait : \n\t0: calculate with MPI_Test; \n\t1: calculate with MPI_Waitany.\n -send : \n\t0: send each row right after it is generated; \n\t1: send rows for particular process after they are generated totally.\n -fill : \n\tFill the array with: \n\t\t0 - random integer mod row_count+1; \n\t\t1 - random integer; \n\t\t2 - row_count.\n");
 		}
 		MPI_Finalize();
 		return 0;
@@ -220,7 +233,7 @@ int main (int argc, char *argv[])
 	if (world_rank==0) 
 	{
 		//generating while sending.
-		generatingWhileSending(row_count_per_process, world_size, world_rank, &requestNull, send_mode);	
+		generatingWhileSending(row_count_per_process, world_size, world_rank, &requestNull, send_mode, fill_mode);	
 	} 
 
 	// ****** Calculating *******

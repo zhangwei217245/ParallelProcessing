@@ -16,7 +16,6 @@ In **zhangwei/bigarray**, we use **ARGS** for passing send mode and wait mode to
 `make run NUM=2 ARGS="-send 1 -wait 0"` means that the program will send messages in batch mode, and detect the arrival of messages with MPI_Test.
 
 * Arguments:
-
 ** wait :
 
 ***	0: calculate with MPI_Test;

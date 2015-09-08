@@ -1,3 +1,4 @@
+
 * Clean Your distribution
 
 `make clean`
@@ -15,18 +16,10 @@ Here, argument **NUM** here is used to specify the number of processes.
 In **zhangwei/bigarray**, we use **ARGS** for passing send mode and wait mode to the program. For example,
 `make run NUM=2 ARGS="-send 1 -wait 0"` means that the program will send messages in batch mode, and detect the arrival of messages with MPI_Test.
 
-<table align="center" border="1" cellpadding="0" cellspacing="0">
-<tr>
-	<th>value</th><th>-send</th><th>-wait</th>
-</tr>
-<tr>
-	<td>0</td><td>sequential</td><td>MPI_Test</td>
-</tr>
-<tr>
-	<td>1</td><td>batch</td><td>MPI_Waitany</td>
-</tr>
-</table>
-| value | -send | -wait |
-|-------+-------+-------|
-|   0   |  seq  |  test |
-|   1   | batch |waitany|
+* Arguments:
+** wait :
+***	0: calculate with MPI_Test;
+***	1: calculate with MPI_Waitany.
+** send :
+***	0: send each row right after it is generated;
+***	1: send rows for particular process after they are generated totally.

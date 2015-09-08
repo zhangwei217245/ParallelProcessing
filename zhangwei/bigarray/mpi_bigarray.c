@@ -164,6 +164,22 @@ void calculateWithMPI_Waitany(int row_count_per_process, MPI_Request *requestLis
 	}
 }
 
+void print_help(int world_rank){
+	if (world_rank == 0) {
+		printf("Arguments:\n");
+		printf(" -wait : \n");
+		printf("\t0: calculate with MPI_Test; \n");
+		printf("\t1: calculate with MPI_Waitany.\n");
+		printf(" -send : \n");
+		printf("\t0: send each row right after it is generated; \n");
+		printf("\t1: send rows for particular process after they are generated totally.\n");
+		printf(" -fill : \n");
+		printf("\tFill the array with: \n");
+		printf("\t\t0 - random integer mod row_count+1; \n");
+		printf("\t\t1 - random integer; \n");
+		printf("\t\t2 - row_count.\n");
+	}
+}
 
 
 int main (int argc, char *argv[])
@@ -207,9 +223,7 @@ int main (int argc, char *argv[])
 	//Parse arguments to decide wait mode and send mode.
 	if (parseArguments(argc, argv, &send_mode, &fill_mode, &wait_mode) < 0)
 	{
-		if (world_rank == 0) {
-			printf("Arguments:\n -wait : \n\t0: calculate with MPI_Test; \n\t1: calculate with MPI_Waitany.\n -send : \n\t0: send each row right after it is generated; \n\t1: send rows for particular process after they are generated totally.\n -fill : \n\tFill the array with: \n\t\t0 - random integer mod row_count+1; \n\t\t1 - random integer; \n\t\t2 - row_count.\n");
-		}
+		print_help(world_rank);
 		MPI_Finalize();
 		return 0;
 	}

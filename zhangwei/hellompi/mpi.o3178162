@@ -1,2 +1,0 @@
-cmd=mpirun -np 12 -machinefile /home/zhang56/ParallelProcessing/zhangwei/hellompi/machinefile.3178162 /home/zhang56/ParallelProcessing/zhangwei/hellompi/helloworld
-12 total processes failed to start

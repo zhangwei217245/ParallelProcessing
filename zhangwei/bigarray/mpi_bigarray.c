@@ -76,6 +76,7 @@ void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MP
 	for (k = 0; k < row_count_per_process; k++) {
 		int row_num = world_rank * row_count_per_process + k;
 		MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
+		printf("MPI_Irecv is called for receiving row #%d by rank #%d\n", row_num, world_rank);
 	}		
 }
 void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull, int send_mode, int fill_mode)

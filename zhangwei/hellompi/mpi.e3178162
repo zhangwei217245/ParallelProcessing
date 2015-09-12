@@ -1,9 +1,0 @@
---------------------------------------------------------------------------
-mpirun was unable to launch the specified application as it could not access
-or execute an executable:
-
-Executable: /home/zhang56/ParallelProcessing/zhangwei/hellompi/helloworld
-Node: compute-4-30.local
-
-while attempting to start process rank 0.
---------------------------------------------------------------------------

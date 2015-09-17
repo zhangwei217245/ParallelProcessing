@@ -102,8 +102,8 @@ Arguments:
 	1: send rows for particular process after they are generated totally.
  -fill : 
 	Fill the array with: 
-		0 - random integer mod row_count+1; 
-		1 - random integer; 
-		2 - row_count.
+	0 - random integer mod row_count+1; 
+	1 - random integer; 
+	2 - row_count.
 ```
 

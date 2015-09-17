@@ -18,7 +18,7 @@ Since there are 1200 rows in all, and there will be n processes running in paral
 
 We offered two modes for generating and sending the data, which are:
 
-*** Sending a row right after generating it.
+### Sending a row right after generating it.
 
 For simplicity, we demonstrate the pseudocode as below:
 
@@ -35,7 +35,7 @@ for (p = 0 to n) {
 
 In this method, since MPI_Isend is asynchronous, it won't block the generating of the next row, namely, the generating of the next row (r+1) can overlap with the sending phase of the current row (r).
 
-*** Sending a group of rows right after generating these rows (we call it batch mode)
+### Sending a group of rows right after generating these rows (we call it batch mode)
 
 For simplicity, we also demonstrate the pseudocode here:
 
@@ -54,39 +54,42 @@ In this method, since MPI_Isend is asychronous, multiple MPI_Isend calls won't b
 
 # To build the program:
 
-    ** Do some cleaning before compiling.
+## Do some cleaning before compiling.
 
-    ```
-    #!sh
-    make clean
-    ```
+```
+#!sh
+make clean
+```
 
-    ** Build the executables
+## Build the executables
 
-    ```
-    #!sh
-    make
-    ```
+```
+#!sh
+make
+```
 
-* Run the program
+# Run the program
 
 ```
 #!sh
 make run NUM=n ARGS="-send a -wait b -fill c"
 ```
 
-# Here, argument **NUM** here is used to specify the number of processes. 
+### Note: here, argument **NUM** here is used to specify the number of processes. 
+ **n** here can be any number out of 1,2,3,4,6,12.
 
-##   **n** here can be any number out of 1,2,3,4,6,12.
-
-# **ARGS** is for passing arguments to the parallel program.
+### **ARGS** is for passing arguments to the parallel program.
 
 We use **ARGS** for passing send mode and wait mode to the program. For example,
 
-`make run NUM=2 ARGS="-send 1 -wait 0"` 
+```
+#!sh
+make run NUM=2 ARGS="-send 1 -wait 0"
+```
 
-means that the program will send messages in batch mode, and detect the arrival of messages with MPI_Test.
+This means that the program will send messages in batch mode, and detect the arrival of messages with MPI_Test.
 
+Here are all the acceptable arguments for this program, and their meaning.
 
 ```
 #!c
@@ -103,3 +106,4 @@ Arguments:
 		1 - random integer; 
 		2 - row_count.
 ```
+

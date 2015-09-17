@@ -1,5 +1,5 @@
 # Project Introduction
-    
+    \sum_{x=0}^n f(x)
 ## Team members: 
 
 Wei Zhang, Ali Nosrati.

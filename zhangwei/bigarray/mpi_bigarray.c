@@ -13,8 +13,10 @@ double get_avg(int len, int *arr){
 }
 char * getTimestamp(){
 	static char buff[20];
-	unsigned long now = time(NULL);
-	sprintf(buff, "%ld", now);	
+	struct timespec tps;
+	clock_gettime(CLOCK_REALTIME, &tps);
+	unsigned long now = tps.tv_sec * 1000 + tps.tv_nsec / 1000000;
+	sprintf(buff, "%lu", now);
 	return buff;
 }
 
@@ -70,15 +72,6 @@ int parseArguments(int argc, char *argv[], int *send_mode, int *fill_mode, int *
 	}
 	return 0;
 }
-void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MPI_Request *requestList)
-{
-	int k;
-	for (k = 0; k < row_count_per_process; k++) {
-		int row_num = world_rank * row_count_per_process + k;
-		MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
-		printf("MPI_Irecv is called for receiving row #%d by rank #%d\n", row_num, world_rank);
-	}		
-}
 void generatingWhileSending(int row_count_per_process, int world_size, int world_rank, MPI_Request * requestNull, int send_mode, int fill_mode)
 {
 	int array[1200][1024];
@@ -122,6 +115,16 @@ void generatingWhileSending(int row_count_per_process, int world_size, int world
 			prank++;
 		}
 	}
+}
+
+void receiving(int row_count_per_process, int world_rank, int msgbuf[][1024], MPI_Request *requestList)
+{
+	int k;
+	for (k = 0; k < row_count_per_process; k++) {
+		int row_num = world_rank * row_count_per_process + k;
+		MPI_Irecv(&msgbuf[k], 1024, MPI_INT, 0, row_num, MPI_COMM_WORLD, &(requestList[k]));
+		printf("%s : MPI_Irecv is called for receiving row #%d by rank #%d\n", getTimestamp(), row_num, world_rank);
+	}		
 }
 
 void calculateWithMPI_Test(int row_count_per_process, MPI_Request *requestList, MPI_Status * status, int msgbuf[][1024], int world_rank, char * processor_name){
@@ -181,7 +184,6 @@ void print_help(int world_rank){
 		printf("\t\t2 - row_count.\n");
 	}
 }
-
 
 int main (int argc, char *argv[])
 {

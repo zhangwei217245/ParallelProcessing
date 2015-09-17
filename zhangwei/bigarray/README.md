@@ -6,13 +6,13 @@ Wei Zhang, Ali Nosrati.
 
 ## Description: 
 
-In this project, we were required to implementing message sending and receiving using MPI. The messages are 1200 rows of data with each row containing 1024 integer numbers, which are evenly sent to different processes by one process. All the processes receives the same amount of rows, and calculate the number of each row and print it out.
+In this project, we were required to implementing message sending and receiving using MPI. The messages are *1200* rows of data with each row containing *1024* integer numbers, which are evenly sent to different processes by one process. All the processes receives the same amount of rows, and calculate the number of each row and print it out.
 
-During the data sending process, the data generating phase should be overlapped with the data sending phase, which could be implemented by invoking MPI_Isend function. While during the data receiving processes, the data receiving phase for each row should be overlapped with the calculation of the average of a certain row.
+During the data sending process, the data generating phase should be overlapped with the data sending phase, which could be implemented by invoking *MPI_Isend* function. While during the data receiving processes, the data receiving phase for each row should be overlapped with the calculation of the average of a certain row.
 
 ## Overview of data distribution policy:
 
-Since there are 1200 rows in all, and there will be n processes running in parallel with one of them generating the data of 1200 rows and sending them out to all the n processes evenly. We let process 0 generate and the send the data, all the processes including process 0 will receive the data and calculate the average number of each row. So, each process should receive 1200/n rows of data, namely, we separate the rows of data into 1200/n groups, and for a certain group p (which will be sent to process p), the indices of the rows inside this group should range from (p-1)*1200/n to (p*1200/n)-1. 
+Since there are *1200* rows in all, and there will be *n* processes running in parallel with one of them generating the data of *1200* rows and sending them out to all the *n* processes evenly. We let process *0* generate and the send the data, all the processes including process *0* will receive the data and calculate the average number of each row. So, each process should receive *1200/n* rows of data, namely, we separate the rows of data into *1200/n* groups, and for a certain group *p* (which will be sent to process *p*), the indices of the rows inside this group should range from *(p-1)*1200/n* to *(p*1200/n)-1*. 
 
 ## Overlapping while generating and sending the data.
 
@@ -56,9 +56,6 @@ In this method, since MPI_Isend is asychronous, multiple MPI_Isend calls won't b
 
 Bacially, this can be implemented by receiving row r+1 while calculating the average for row r. 
 
-|a|b|
-|-|-|
-|1|2|
 
 
 # To build the program:
@@ -84,18 +81,14 @@ make
 make run NUM=n ARGS="-send a -wait b -fill c"
 ```
 
-### Note: here, argument **NUM** here is used to specify the number of processes. 
- **n** here can be any number out of 1,2,3,4,6,12.
+- Note: here, argument **NUM** here is used to specify the number of processes, **n** here can be any number out of 1,2,3,4,6,12.
 
-### **ARGS** is for passing arguments to the parallel program.
-
-We use **ARGS** for passing send mode and wait mode to the program. For example,
+- **ARGS** is for passing arguments to the parallel program. We use **ARGS** for passing send mode and wait mode to the program. For example,
 
 ```
 #!sh
 make run NUM=2 ARGS="-send 1 -wait 0"
 ```
-
 This means that the program will send messages in batch mode, and detect the arrival of messages with MPI_Test.
 
 Here are all the acceptable arguments for this program, and their meaning.

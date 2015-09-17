@@ -179,9 +179,9 @@ void print_help(int world_rank){
 		printf("\t1: send rows for particular process after they are generated totally.\n");
 		printf(" -fill : \n");
 		printf("\tFill the array with: \n");
-		printf("\t\t0 - random integer mod row_count+1; \n");
-		printf("\t\t1 - random integer; \n");
-		printf("\t\t2 - row_count.\n");
+		printf("\t0 - random integer mod row_count+1; \n");
+		printf("\t1 - random integer; \n");
+		printf("\t2 - row_count.\n");
 	}
 }
 

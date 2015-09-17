@@ -54,7 +54,9 @@ In this method, since *MPI_Isend* is asychronous, multiple *MPI_Isend* calls won
 
 ## Overlapping while receiving the rows and calculating the average for each row.
 
-Bacially, this can be implemented by receiving row *r+1* while calculating the average for row *r*. However, again, since the *MPI_Irecv* function offers the capability of asynchronous execution (though the actual data receiving phase may be blocked due to limited I/O or memory data path, the invocation of multiple *MPI_Irecv* function calls can happen at the same time), in each process, we can initial exactly *1200/n* *MPI_Irecv* calls at the beginning for receiving *1200/n* rows ranging from *(p-1)\*1200/n* to *p\*1200/n-1* (for process *0*, this can happen even before the data is generated and sent, such overlapping will be discussed in the next section.). Then we may invoke *MPI_Test* for multiple times in a loop to detect all those *1200/n* *MPI_Request* references to see whether any of them is finished. Certainly, invoking *MPI_Test* in a loop is equivalent to invoking *MPI_Waitany* for a list of *MPI_Request* references.
+Bacially, this can be implemented by receiving row *r+1* while calculating the average for row *r*. 
+
+However, again, since the *MPI_Irecv* function offers the capability of asynchronous execution (though the actual data receiving phase may be blocked due to limited I/O or memory data path, the invocation of multiple *MPI_Irecv* function calls can happen at the same time), in each process, we can initial exactly *1200/n* *MPI_Irecv* calls at the beginning for receiving *1200/n* rows ranging from *(p-1)\*1200/n* to *p\*1200/n-1* (for process *0*, this can happen even before the data is generated and sent, since the MPI_Irecv is also asynchronous). Then we may invoke *MPI_Test* for multiple times in a loop to detect all those *1200/n* *MPI_Request* references to see whether any of them is finished. Certainly, invoking *MPI_Test* in a loop is equivalent to invoking *MPI_Waitany* for a list of *MPI_Request* references.
 
 Here is the pseudocode:
 

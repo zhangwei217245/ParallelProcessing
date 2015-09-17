@@ -44,12 +44,12 @@ For simplicity, we also demonstrate the pseudocode here:
 for (p = 0 to n) {
     for (i = (p-1)*1200/n to (p*1200/n)-1 ){
         generating row[i];
-            }
-            for (i = (p-1)*1200/n to (p*1200/n)-1 ){
-                calling MPI_Isend for sending row[i] to process p;
-            }
-        }
-        ```
+    }
+    for (i = (p-1)*1200/n to (p*1200/n)-1 ){
+        calling MPI_Isend for sending row[i] to process p;
+    }
+}
+```
 In this method, since MPI_Isend is asychronous, multiple MPI_Isend calls won't block the invocation of themselves, though the actual data sending phase of a certain MPI_Isend call could be blocked by others' data sending phase. Then, where is the overlapping? It's interesting to note that while the data sending for process p is working in background, the generating of the rows for process p+1 could be carried out simultaneously. This is a coarser overlapping between the generation of a bunch of data and the sending phase for another bunch of data.
 
 # To build the program:

@@ -148,3 +148,12 @@ Arguments:
     1 - random integer; 
     2 - row_count.
 ```
+
+# Observing the output of the program
+
+Simply execute the following once you successfully run the program.
+
+```
+#!sh
+more output/*
+```

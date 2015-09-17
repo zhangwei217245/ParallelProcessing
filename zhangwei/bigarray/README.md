@@ -52,6 +52,15 @@ for (p = 0 to n) {
 ```
 In this method, since MPI_Isend is asychronous, multiple MPI_Isend calls won't block the invocation of themselves, though the actual data sending phase of a certain MPI_Isend call could be blocked by others' data sending phase. Then, where is the overlapping? It's interesting to note that while the data sending for process p is working in background, the generating of the rows for process p+1 could be carried out simultaneously. This is a coarser overlapping between the generation of a bunch of data and the sending phase for another bunch of data.
 
+## Overlapping while receiving the rows and calculating the average for each row.
+
+Bacially, this can be implemented by receiving row r+1 while calculating the average for row r. 
+
+|a|b|
+|-|-|
+|1|2|
+
+
 # To build the program:
 
 ## Do some cleaning before compiling.
@@ -95,15 +104,16 @@ Here are all the acceptable arguments for this program, and their meaning.
 #!c
 Arguments:
  -wait : 
-	0: calculate with MPI_Test; 
-	1: calculate with MPI_Waitany.
+    0: calculate with MPI_Test; 
+    1: calculate with MPI_Waitany.
  -send : 
-	0: send each row right after it is generated; 
-	1: send rows for particular process after they are generated totally.
+    0: send each row right after it is generated; 
+    1: send rows for particular process after they are generated totally.
  -fill : 
-	Fill the array with: 
-	0 - random integer mod row_count+1; 
-	1 - random integer; 
-	2 - row_count.
+    Fill the array with: 
+    0 - random integer mod row_count+1; 
+    1 - random integer; 
+    2 - row_count.
 ```
+
 

@@ -12,7 +12,17 @@ char * getTimestamp(){
         sprintf(buff, "%lu", now);
         return buff;
 }
-
+char * getTimeString(){
+		static char buff[20];
+        struct timespec tps;
+        clock_gettime(CLOCK_REALTIME, &tps);
+        unsigned long now_milli = tps.tv_nsec / 1000000;
+        time_t now = tps.tv_sec;
+		//time_t now = time(NULL);
+		strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&now));
+		sprintf(buff, "%s%lu", buff, now_milli);
+		return buff;
+}
 int my_barrier(MPI_Comm comm){
 
 		return 0;
@@ -41,6 +51,7 @@ int main(int argc, char *argv[])
 		MPI_Get_processor_name(processor_name, &name_len);
 
 
+		printf("[%s]: Process #%d starts.\n", getTimestamp(), world_rank);
 		// Each process will carry out some calculation or operations, which takes different times.
 		if (world_rank % 2 == 0){ 
 				sleep(3);
@@ -48,12 +59,12 @@ int main(int argc, char *argv[])
 				sleep(1);
 		}
 		
-		printf("[%s]: Process #%d is entering barrier", getTimestamp(), world_rank);
+		printf("[%s]: Process #%d is entering barrier.\n", getTimestamp(), world_rank);
 		// Call the barrier function here
 		//my_barrier(MPI_COMM_WORLD);
 		MPI_Barrier(MPI_COMM_WORLD);
 		// print the message after the barrier, by each process.
-		printf("[%s]: Process #%d: passed barrier.", getTimestamp(), world_rank);
+		printf("[%s]: Process #%d: passed barrier.\n", getTimestamp(), world_rank);
 
 		// Finalize the MPI environment
 		MPI_Finalize();

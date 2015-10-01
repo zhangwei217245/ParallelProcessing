@@ -44,8 +44,10 @@ int main(int argc, char *argv[])
 
 		// Each process will carry out some calculation or operations, which takes different times.
 		if (world_rank % 2 == 0){ 
-				sleep(
-		} 
+				sleep(3);
+		} else {
+				sleep(1);
+		}
 
 		// Call the barrier function here
 		my_barrier(comm);

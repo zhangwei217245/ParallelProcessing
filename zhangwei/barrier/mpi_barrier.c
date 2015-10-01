@@ -48,10 +48,11 @@ int main(int argc, char *argv[])
 		} else {
 				sleep(1);
 		}
-
+		
+		printf("[%s]: Process #%d is entering barrier", getTimestamp(), world_rank);
 		// Call the barrier function here
-		my_barrier(comm);
-
+		//my_barrier(comm);
+		MPI_Barrier(comm);
 		// print the message after the barrier, by each process.
 		printf("[%s]: Process #%d: passed barrier.", getTimestamp(), world_rank);
 

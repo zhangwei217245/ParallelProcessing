@@ -15,7 +15,7 @@ char * getTimestamp(){
 
 int my_barrier(MPI_Comm comm){
 
-
+		return 0;
 }
 
 int main(int argc, char *argv[])
@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 
 		char processor_name[MPI_MAX_PROCESSOR_NAME];
 		int name_len;
-		MPI_Comm comm;
 
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
@@ -51,8 +50,8 @@ int main(int argc, char *argv[])
 		
 		printf("[%s]: Process #%d is entering barrier", getTimestamp(), world_rank);
 		// Call the barrier function here
-		//my_barrier(comm);
-		MPI_Barrier(comm);
+		//my_barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
 		// print the message after the barrier, by each process.
 		printf("[%s]: Process #%d: passed barrier.", getTimestamp(), world_rank);
 

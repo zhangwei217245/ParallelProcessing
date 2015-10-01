@@ -34,4 +34,10 @@ int main(int argc, char *argv[])
 		MPI_Get_processor_name(processor_name, &name_len);
 		
 		printf("[%s]: Process #%d: passed barrier.", getTimestamp(), world_rank);
+
+        //Finalize the MPI environment
+    	MPI_Finalize();
+		return 0;
+
+
 }

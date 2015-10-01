@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
 #include <mpi.h>
@@ -12,6 +13,10 @@ char * getTimestamp(){
         return buff;
 }
 
+int my_barrier(MPI_Comm comm){
+
+
+}
 
 int main(int argc, char *argv[])
 {	
@@ -21,6 +26,7 @@ int main(int argc, char *argv[])
 
 		char processor_name[MPI_MAX_PROCESSOR_NAME];
 		int name_len;
+		MPI_Comm comm;
 
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
@@ -34,7 +40,21 @@ int main(int argc, char *argv[])
 
 		// Get the name of the processor
 		MPI_Get_processor_name(processor_name, &name_len);
-		
+
+
+		// Each process will carry out some calculation or operations, which takes different times.
+		if (world_rank % 2 == 0){ 
+				sleep(
+		} 
+
+		// Call the barrier function here
+		my_barrier(comm);
+
+		// print the message after the barrier, by each process.
 		printf("[%s]: Process #%d: passed barrier.", getTimestamp(), world_rank);
 
+		// Finalize the MPI environment
+		MPI_Finalize();
+
+		return 0;
 }

@@ -1,12 +1,21 @@
 CC=mpicc
 CFLAGS=-i_dynamic
-OBJ=mybarrier.out
-SRC=mpi_barrier.c
+OBJ=mpi_barrier.out
+UTIL=util.c 
+SRC=mpi_barrier_test.c
 EXEC=mpirun
 
+OS=$(shell uname)
+ifeq ($(OS),Darwin)
+		GETTIME=osx_gettime.c
+		UTIL=util_osx.c
+else
+		GETTIME=linux_gettime.c
+		UTIL=util.c
+endif
 
-${OBJ}: ${SRC} 
-	${CC} ${CFLAGS} -o $@ ${SRC}
+${OBJ}: ${SRC} ${ALGO}_barrier.c ${UTIL} ${GETTIME}
+	${CC} ${CFLAGS} -o $@ ${SRC} ${ALGO}_barrier.c ${UTIL} ${GETTIME}
 
 
 .PHONY: run

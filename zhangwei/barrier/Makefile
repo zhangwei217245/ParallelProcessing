@@ -7,15 +7,13 @@ EXEC=mpirun
 
 OS=$(shell uname)
 ifeq ($(OS),Darwin)
-		GETTIME=osx_gettime.c
 		UTIL=util_osx.c
 else
-		GETTIME=linux_gettime.c
 		UTIL=util.c
 endif
 
-${OBJ}: ${SRC} ${ALGO}_barrier.c ${UTIL} ${GETTIME}
-	${CC} ${CFLAGS} -o $@ ${SRC} ${ALGO}_barrier.c ${UTIL} ${GETTIME}
+${OBJ}: ${SRC} ${ALGO}_barrier.c ${UTIL}
+	${CC} ${CFLAGS} -o $@ ${SRC} ${ALGO}_barrier.c ${UTIL}
 
 
 .PHONY: run

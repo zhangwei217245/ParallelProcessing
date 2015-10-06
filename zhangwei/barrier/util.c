@@ -1,5 +1,16 @@
 #include "util.h"
+#include <math.h>
 
+int clk_gettime(int clk_id, struct timespec* t) {
+		return clock_gettime(clk_id, t);
+}
+double lg(double n){
+		return log(n)/log(2);
+}
+
+int ceiling(double n){
+		return (int)ceil(n);
+}
 char * getTimestamp(){
 		static char buff[20];
 		struct timespec tps;

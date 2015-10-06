@@ -33,6 +33,7 @@ int my_barrier(MPI_Comm comm){
 				flag = flag + x;
 				last_mid = mid;
 		}
+		printf("[%s]: Butterfly Barrier done for #%d.\n", getTimeString(), world_rank);
 		while (1==1) {
 				if (flag == world_size){
 						break;

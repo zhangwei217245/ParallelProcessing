@@ -19,7 +19,6 @@ int my_barrier(MPI_Comm comm){
 
 int main(int argc, char *argv[])
 {	
-
 		int world_size;
 		int world_rank;
 

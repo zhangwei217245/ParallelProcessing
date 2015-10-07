@@ -14,7 +14,7 @@ char * getTimestamp(){
 }
 
 int my_barrier(MPI_Comm comm){
-    return 0;
+//    return 0;
 }
 
 int main(int argc, char *argv[])

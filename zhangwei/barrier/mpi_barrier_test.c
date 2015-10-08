@@ -51,8 +51,10 @@ int main(int argc, char *argv[])
 
 		printf("[%s]: Process #%d STARTS.\n", getTimeString(), world_rank);
 		// Each process will carry out some calculation or operations, which takes different times.
-		if (world_rank % 2 == 1){ 
-				sleep(4);
+		if (world_rank % 3 == 0){ 
+				sleep(5);
+		} else if (world_rank % 3 == 1) {
+				sleep(3);
 		} else {
 				sleep(1);
 		}

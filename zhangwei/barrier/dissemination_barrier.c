@@ -4,7 +4,7 @@
 
 int dissemination_barrier(MPI_Comm comm){
 		int world_size, world_rank;
-		int i = 0;
+		int i = 0, x = 0;
 		
 		MPI_Status status;
 		
@@ -18,9 +18,10 @@ int dissemination_barrier(MPI_Comm comm){
 		for (i = 0; i < totalSteps; i++){
 				int pow_2 = (int)pow((double)2, (double)i);
 				int dst = (world_rank + pow_2) % world_size;
-				int src = world_size - ((world_rank - pow_2) % world_size);
+				int src = (world_rank - pow_2 + world_size) % world_size;
+				printf("[%s] %d -> %d -> %d\n", getTimeString(),src, world_rank, dst);
 				MPI_Send(&i, 1, MPI_INT, dst, 0, MPI_COMM_WORLD);
-				MPI_Recv(&i, 1, MPI_INT, src, 0, MPI_COMM_WORLD, &status);
+				MPI_Recv(&x, 1, MPI_INT, src, 0, MPI_COMM_WORLD, &status);
 		}
 		printf("[%s]: Dissemination Barrier done for #%d.\n", getTimeString(), world_rank);
 		return 0;

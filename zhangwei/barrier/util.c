@@ -11,6 +11,9 @@ double lg(double n){
 int ceiling(double n){
 		return (int)ceil(n);
 }
+double flooor(double n){
+		return floor(n);
+}
 char * getTimestamp(){
 		static char buff[20];
 		struct timespec tps;

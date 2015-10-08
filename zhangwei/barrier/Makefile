@@ -2,7 +2,7 @@ CC=mpicc
 CFLAGS=-i_dynamic
 OBJ=mpi_barrier.out
 UTIL=util.c 
-SRC=mpi_barrier_test.c
+SRC=mpi_barrier_test.c my_barrier.c tree_barrier.c butterfly_barrier.c dissemination_barrier.c 
 EXEC=mpirun
 
 OS=$(shell uname)
@@ -12,8 +12,8 @@ else
 		UTIL=util.c
 endif
 
-${OBJ}: ${SRC} ${ALGO}_barrier.c ${UTIL}
-	${CC} ${CFLAGS} -o $@ ${SRC} ${ALGO}_barrier.c ${UTIL}
+${OBJ}: ${SRC} ${UTIL} 
+	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
 
 
 .PHONY: run

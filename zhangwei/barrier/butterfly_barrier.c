@@ -1,11 +1,10 @@
-#include "my_barrier.h"
+#include "butterfly_barrier.h"
 #include <math.h>
 #include "util.h"
 
-
-int my_barrier(MPI_Comm comm){
+int butterfly_barrier(MPI_Comm comm){
 		int world_size, world_rank;
-		int flag = 1, i = 0, x = 0;
+		int i = 0, x = 0;
 		
 		MPI_Status status;
 		
@@ -27,17 +26,10 @@ int my_barrier(MPI_Comm comm){
 				} else {
 						addr = world_rank - mid;
 				}
-				int x;
-				MPI_Send(&flag, 1, MPI_INT, addr, 0, MPI_COMM_WORLD);
+				MPI_Send(&x, 1, MPI_INT, addr, 0, MPI_COMM_WORLD);
 				MPI_Recv(&x, 1, MPI_INT, addr, 0, MPI_COMM_WORLD, &status);
-				flag = flag + x;
 				last_mid = mid;
 		}
 		printf("[%s]: Butterfly Barrier done for #%d.\n", getTimeString(), world_rank);
-		while (1==1) {
-				if (flag == world_size){
-						break;
-				}
-		}
 		return 0;
 }

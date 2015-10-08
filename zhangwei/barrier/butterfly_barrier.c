@@ -26,7 +26,6 @@ int butterfly_barrier(MPI_Comm comm){
 				} else {
 						addr = world_rank - mid;
 				}
-				int x;
 				MPI_Send(&x, 1, MPI_INT, addr, 0, MPI_COMM_WORLD);
 				MPI_Recv(&x, 1, MPI_INT, addr, 0, MPI_COMM_WORLD, &status);
 				last_mid = mid;

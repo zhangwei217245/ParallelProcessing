@@ -16,7 +16,9 @@ int clk_gettime(int clk_id, struct timespec* t) {
 double lg(double n){
 		return log(n)/log(2);
 }
-
+double flooor(double n){
+				return floor(n);
+}
 int ceiling(double n){
 		return (int)ceil(n);
 }

@@ -2,4 +2,4 @@
 #include <math.h>
 #include <stdio.h>
 
-int combiningtree_barrier(MPI_Comm comm);
+int tree_barrier(MPI_Comm comm);

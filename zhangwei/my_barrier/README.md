@@ -39,9 +39,9 @@ dest process id, if necessary).
 
 For example, Imagine that we have 5 processes (With process id form 0 to 4)
 
-In the 1st step (Step number = 0), dst-src = 2^0 = 1:
+**In the 1st step (Step number = 0), dst-src = 2^0 = 1:**
 
-Sender          |      |   Receiver    |
+|Sender         |      |   Receiver    |
 |:--------------|:-----|:--------------|
 |process rank_0 | ---> | process rank_1| 
 |process rank_1 | ---> | process rank_2|
@@ -53,7 +53,7 @@ Sender          |      |   Receiver    |
 some data from rank_4 and so on)
 
 
-In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
+**In the 2nd step (Step number = 1), dst-src =  2^1 = 2:**
 
 |Sender         |      |Receiver       |
 |:--------------|:---- |:--------------|
@@ -64,7 +64,7 @@ In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
 |process rank_4 | ---> | process rank_1|
 
 
-In the 3rd step (Step number = 2), dst-src = 2^2 = 4:
+**In the 3rd step (Step number = 2), dst-src = 2^2 = 4:**
 
 |Sender         |      |Receiver       |
 |:--------------|:-----|:--------------|

@@ -2,7 +2,7 @@
 
 ## Team members: 
 
-Wei Zhang and Ali Nosrati
+**Wei Zhang** and **Ali Nosrati**
 
 ## Description: 
 
@@ -41,17 +41,13 @@ For example, Imagine that we have 5 processes (With process id form 0 to 4)
 
 In the 1st step (Step number = 0), dst-src = 2^0 = 1:
 
-|Sender         |   Receiver    |
-<<<<<<< HEAD
-|---------------|---------------|
-=======
-|:-------------:|:-------------:|
->>>>>>> c0e2a9f3d71b181817341b2c7d72101373e13cb9
-|process rank_0 | process rank_1| 
-|process rank_1 | process rank_2|
-|process rank_2 | process rank_3|
-|process rank_3 | process rank_4|
-|process rank_4 | process rank_0|
+Sender          |      |   Receiver    |
+|:--------------|:-----|:--------------|
+|process rank_0 | ---> | process rank_1| 
+|process rank_1 | ---> | process rank_2|
+|process rank_2 | ---> | process rank_3|
+|process rank_3 | ---> | process rank_4|
+|process rank_4 | ---> | process rank_0|
 
 (In this step, rank_0 send some data to rank_1 and also wait until it receive
 some data from rank_4 and so on)
@@ -59,27 +55,24 @@ some data from rank_4 and so on)
 
 In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
 
-|Sender         |Receiver       |
-<<<<<<< HEAD
-=======
-|:-------------:|:-------------:|
->>>>>>> c0e2a9f3d71b181817341b2c7d72101373e13cb9
-|process rank_0 | process rank_2| 
-|process rank_1 | process rank_3|
-|process rank_2 | process rank_4|
-|process rank_3 | process rank_0|
-|process rank_4 | process rank_1|
+|Sender         |      |Receiver       |
+|:--------------|:---- |:--------------|
+|process rank_0 | ---> | process rank_2| 
+|process rank_1 | ---> | process rank_3|
+|process rank_2 | ---> | process rank_4|
+|process rank_3 | ---> | process rank_0|
+|process rank_4 | ---> | process rank_1|
 
 
 In the 3rd step (Step number = 2), dst-src = 2^2 = 4:
 
-|Sender         |Receiver       |
-|:-------------:|:-------------:|
-|process rank_0 | process rank_4| 
-|process rank_1 | process rank_0|
-|process rank_2 | process rank_1|
-|process rank_3 | process rank_2|
-|process rank_4 | process rank_3|
+|Sender         |      |Receiver       |
+|:--------------|:-----|:--------------|
+|process rank_0 | ---> | process rank_4| 
+|process rank_1 | ---> | process rank_0|
+|process rank_2 | ---> | process rank_1|
+|process rank_3 | ---> | process rank_2|
+|process rank_4 | ---> | process rank_3|
 
 
 And right after 3 steps all the process will be informed whether the other process

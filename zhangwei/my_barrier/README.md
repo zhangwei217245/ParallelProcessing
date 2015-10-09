@@ -17,8 +17,9 @@ and message-passing-based computer systems. The algorithm that we
 have used to implement barrier is called "dissemination" and it can work perfectly 
 with any random number of the processes (There is no limitation for algorithm to 
 work properly only for the number of processes (P), which P is a power of two). 
-For more information about dissemination you can check "Two Algorithms for Barrier 
-Synchronization" by DEBRAH ENGSEN, RAPHAEL FINKEL and UDI MANBER, March 1988.
+For more information about dissemination you can check 
+
+DEBRAH ENGSEN, RAPHAEL FINKEL and UDI MANBER, __Two Algorithms for Barrier Synchronization__ , March 1988.
 
 ## Overview of Algorithm 
 By using dissemination algorithm, every processes cannot continue working and 

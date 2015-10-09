@@ -2,7 +2,7 @@
 
 ## Team members: 
 
-Wei Zhang and Ali Nosrati
+**Wei Zhang** and **Ali Nosrati**
 
 ## Description: 
 

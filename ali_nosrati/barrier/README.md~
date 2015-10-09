@@ -2,7 +2,7 @@
 
 ## Team members: 
 
-**Wei Zhang** and **Ali Nosrati**
+Wei Zhang and Ali Nosrati
 
 ## Description: 
 
@@ -17,9 +17,8 @@ and message-passing-based computer systems. The algorithm that we
 have used to implement barrier is called "dissemination" and it can work perfectly 
 with any random number of the processes (There is no limitation for algorithm to 
 work properly only for the number of processes (P), which P is a power of two). 
-For more information about dissemination you can check 
-
-DEBRAH ENGSEN, RAPHAEL FINKEL and UDI MANBER, _**Two Algorithms for Barrier Synchronization**_ , March 1988.
+For more information about dissemination you can check "Two Algorithms for Barrier 
+Synchronization" by DEBRAH ENGSEN, RAPHAEL FINKEL and UDI MANBER, March 1988.
 
 ## Overview of Algorithm 
 By using dissemination algorithm, every processes cannot continue working and 
@@ -41,13 +40,11 @@ For example, Imagine that we have 5 processes (With process id form 0 to 4)
 
 In the 1st step (Step number = 0), dst-src = 2^0 = 1:
 
-Sender          |      |   Receiver    |
-|:--------------|:-----|:--------------|
-|process rank_0 | ---> | process rank_1| 
-|process rank_1 | ---> | process rank_2|
-|process rank_2 | ---> | process rank_3|
-|process rank_3 | ---> | process rank_4|
-|process rank_4 | ---> | process rank_0|
+process rank_0 -> process rank_1 
+process rank_1 -> process rank_2
+process rank_2 -> process rank_3
+process rank_3 -> process rank_4
+process rank_4 -> process rank_0
 
 (In this step, rank_0 send some data to rank_1 and also wait until it receive
 some data from rank_4 and so on)
@@ -55,28 +52,23 @@ some data from rank_4 and so on)
 
 In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
 
-|Sender         |      |Receiver       |
-|:--------------|:---- |:--------------|
-|process rank_0 | ---> | process rank_2| 
-|process rank_1 | ---> | process rank_3|
-|process rank_2 | ---> | process rank_4|
-|process rank_3 | ---> | process rank_0|
-|process rank_4 | ---> | process rank_1|
-
+process 0 -> process 2
+process 1 -> process 3
+process 2 -> process 4
+process 3 -> process 0
+process 4 -> process 1
 
 In the 3rd step (Step number = 2), dst-src = 2^2 = 4:
 
-|Sender         |      |Receiver       |
-|:--------------|:-----|:--------------|
-|process rank_0 | ---> | process rank_4| 
-|process rank_1 | ---> | process rank_0|
-|process rank_2 | ---> | process rank_1|
-|process rank_3 | ---> | process rank_2|
-|process rank_4 | ---> | process rank_3|
-
+process 0 -> process 4
+process 1 -> process 0
+process 2 -> process 1
+process 3 -> process 2
+process 4 -> process 3
 
 And right after 3 steps all the process will be informed whether the other process
 have reached the barrier or not.
+
 
 In this part of code you can see how we have determined the src process number (that 
 arbitrary data have to be received from) and the destination process number (which we have to send 
@@ -151,12 +143,40 @@ make
 
 ```
 #!sh
-make run NUM=n
+make run NUM=n ARGS="-send a -wait b -fill c"
 ```
 
 - Note: here, argument **NUM** here is used to specify the number of processes,
-**n** here can be any integer number.
+**n** here can be any number out of 1,2,3,4,6,12.
 
+- **ARGS** is for passing arguments to the parallel program. We use **ARGS**
+for passing send mode and wait mode to the program. For example,
+
+```
+#!sh
+make run NUM=2 ARGS="-send 1 -wait 0"
+```
+This means that the program will send messages in batch mode, and detect
+the arrival of messages with MPI_Test.
+
+Here are all the acceptable arguments for this program, and their meaning.
+
+```
+#!c
+Arguments:
+-wait : 
+0: calculate with MPI_Test; 
+1: calculate with MPI_Waitany.
+-send : 
+0: send each row right after it is generated; 
+1: send rows for particular process after they are
+generated totally.
+-fill : 
+Fill the array with: 
+0 - random integer mod row_count+1; 
+1 - random integer; 
+2 - row_count.
+```
 
 # Observing the output of the program
 
@@ -166,4 +186,23 @@ successfully run the program.
 ```
 #!sh
 more output/*
+            ```
+
+            ```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
 ```

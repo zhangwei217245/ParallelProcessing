@@ -1,6 +1,6 @@
+#include "mpi.h"
 #include <string.h>
 #include "util.h"
-#include "my_barrier.h"
 
 int my_barrier(MPI_Comm comm) {
 		int world_size, world_rank;

@@ -41,7 +41,11 @@ For example, Imagine that we have 5 processes (With process id form 0 to 4)
 
 In the 1st step (Step number = 0), dst-src = 2^0 = 1:
 
+<<<<<<< HEAD
 |Sender         |Receiver       |
+=======
+|Sender         |   Receiver    |
+>>>>>>> c535fb8daadc7e01cf5c8d344a9c96e2d0f3ac15
 |:--------------|--------------:|
 |process rank_0 | process rank_1| 
 |process rank_1 | process rank_2|
@@ -55,8 +59,13 @@ some data from rank_4 and so on)
 
 In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
 
+<<<<<<< HEAD
 |Sender         |Receiver       |
 |:--------------|--------------:|
+=======
+|Sender         |   Receiver    |
+|:--------------|:--------------|
+>>>>>>> c535fb8daadc7e01cf5c8d344a9c96e2d0f3ac15
 |process rank_0 | process rank_2| 
 |process rank_1 | process rank_3|
 |process rank_2 | process rank_4|
@@ -66,8 +75,13 @@ In the 2nd step (Step number = 1), dst-src =  2^1 = 2:
 
 In the 3rd step (Step number = 2), dst-src = 2^2 = 4:
 
+<<<<<<< HEAD
 |Sender         |Receiver       |
 |:--------------|--------------:|
+=======
+|Sender         |   Receiver    |
+|:--------------|:--------------|
+>>>>>>> c535fb8daadc7e01cf5c8d344a9c96e2d0f3ac15
 |process rank_0 | process rank_4| 
 |process rank_1 | process rank_0|
 |process rank_2 | process rank_1|
@@ -151,40 +165,12 @@ make
 
 ```
 #!sh
-make run NUM=n ARGS="-send a -wait b -fill c"
+make run NUM=n
 ```
 
 - Note: here, argument **NUM** here is used to specify the number of processes,
-**n** here can be any number out of 1,2,3,4,6,12.
+**n** here can be any integer number.
 
-- **ARGS** is for passing arguments to the parallel program. We use **ARGS**
-for passing send mode and wait mode to the program. For example,
-
-```
-#!sh
-make run NUM=2 ARGS="-send 1 -wait 0"
-```
-This means that the program will send messages in batch mode, and detect
-the arrival of messages with MPI_Test.
-
-Here are all the acceptable arguments for this program, and their meaning.
-
-```
-#!c
-Arguments:
--wait : 
-0: calculate with MPI_Test; 
-1: calculate with MPI_Waitany.
--send : 
-0: send each row right after it is generated; 
-1: send rows for particular process after they are
-generated totally.
--fill : 
-Fill the array with: 
-0 - random integer mod row_count+1; 
-1 - random integer; 
-2 - row_count.
-```
 
 # Observing the output of the program
 

@@ -41,7 +41,7 @@ dest process id, if necessary).
 
 For example, Imagine that we have 5 processes (With process id form 0 to 4)
 
-In the 1st step (Step number = 0), dst-src = 2^0 = 1:
+_**In the 1st step (Step number = 0), dst-src = 2^0 = 1:**_
 
 Sender          |      |   Receiver    |
 |:--------------|:-----|:--------------|

@@ -1,3 +1,5 @@
+//Wei Zhang, Ali Nosrati
+
 #include "mpi.h"
 #include <string.h>
 #include "util.h"

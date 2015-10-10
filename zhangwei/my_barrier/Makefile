@@ -1,3 +1,5 @@
+#Wei Zhang, Ali Nosrati
+
 CC=mpicc
 CFLAGS=-i_dynamic
 OBJ=my_barrier.out

@@ -1,3 +1,5 @@
+//Wei Zhang, Ali Nosrati
+
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>

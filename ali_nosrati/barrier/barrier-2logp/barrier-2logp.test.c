@@ -1,33 +1,31 @@
-//Wei Zhang, Ali Nosrati
-
-#include "mpi.h"
 #include <string.h>
 #include "util.h"
+#include "my_barrier.h"
 
-int my_barrier(MPI_Comm comm) {
-		int world_size, world_rank;
-		int i = 0, x = 0;
-
-		MPI_Status status;
-
-		// Get the number of processes
-		MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-		// Get the rank of the processor
-		MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-
-		int totalSteps = ceiling(lg((double) world_size));
-		for (i = 0; i < totalSteps; i++){
-				int pow_2 = (int)pow((double)2, (double)i);
-				int dst = (world_rank + pow_2) % world_size;
-				int src = (world_rank - pow_2 + world_size) % world_size;
-				printf("[%s] %d -> %d -> %d\n", getTimeString(),src, world_rank, dst);
-				MPI_Send(&i, 1, MPI_INT, dst, 0, MPI_COMM_WORLD);
-				MPI_Recv(&x, 1, MPI_INT, src, 0, MPI_COMM_WORLD, &status);
+/**
+ * return 1 for MPI_Barrier, and 0 for my_barrier;
+ * return -1 for unrecognizable value of argument; 
+**/
+int determineBarrierType(int argc, char *argv[])
+{
+		char bar_type[]="-bar";
+		int i=0;
+		for ( ; i < argc; i++)
+		{
+				if (strncmp(bar_type, argv[i], 4) == 0 && (i+1) < argc)
+				{
+						
+						if (strncmp(argv[i+1], "mpi", 3)==0) {
+								return 1;
+						}
+						if (strncmp(argv[i+1], "my", 2)==0) {
+								return 0;
+						}
+				}
 		}
-		printf("[%s]: Dissemination Barrier done for #%d.\n", getTimeString(), world_rank);
-		return 0;
+		return -1;
 }
+
 int main(int argc, char *argv[])
 {	
 
@@ -53,19 +51,19 @@ int main(int argc, char *argv[])
 
 		printf("[%s]: Process #%d STARTS.\n", getTimeString(), world_rank);
 		// Each process will carry out some calculation or operations, which takes different times.
-		if (world_rank % 3 == 0){ 
-				sleep(5);
-		} else if (world_rank % 3 == 1) {
-				sleep(3);
+		if (world_rank % 2 == 1){ 
+				sleep(4);
 		} else {
 				sleep(1);
 		}
 		
 		printf("[%s]: Process #%d is ENTERING barrier.\n", getTimeString(), world_rank);
 		// Call the barrier function here
-
-		my_barrier(MPI_COMM_WORLD);
-
+		if (determineBarrierType(argc, argv) <= 0){
+				my_barrier(MPI_COMM_WORLD);
+		}else {
+				MPI_Barrier(MPI_COMM_WORLD);
+		}
 		// print the message after the barrier, by each process.
 		printf("[%s]: Process #%d: PASSED barrier.\n", getTimeString(), world_rank);
 

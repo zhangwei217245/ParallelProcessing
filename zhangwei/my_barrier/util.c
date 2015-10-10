@@ -1,3 +1,5 @@
+//Wei Zhang, Ali Nosrati
+
 #include "util.h"
 #include <math.h>
 

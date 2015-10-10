@@ -1,15 +1,12 @@
-#Wei Zhang, Ali Nosrati
-
 CC=mpicc
 CFLAGS=-i_dynamic
-OBJ=my_barrier.out
-UTIL=util.c 
-SRC=my_barrier.c 
+OBJ=barrier.out
+SRC=mpi_barrier.c
 EXEC=mpirun
 
 
-${OBJ}: ${SRC} ${UTIL} 
-	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
+${OBJ}: ${SRC} 
+	${CC} ${CFLAGS} -o $@ ${SRC}
 
 
 .PHONY: run

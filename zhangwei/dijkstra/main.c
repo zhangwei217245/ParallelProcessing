@@ -2,6 +2,7 @@
 #include "util.h"
 
 int main(int argc, char * argv[]){
-		long a = INFTY;
-		printf("%lu", a);
+		int n = 5;
+		int **edge = generateMatrix(n);
+		printMatrix(edge, n);
 }

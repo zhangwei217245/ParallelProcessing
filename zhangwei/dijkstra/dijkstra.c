@@ -1,8 +1,8 @@
-#include "util.h"
-#include <stdio.h>
+#include "dijkstra.h"
 
 int chooseVertex(int *dist, int n, int *found){
-		int i; tmp; least = INFTY, leastPosition;
+		int i, tmp, leastPosition;
+		int least = INFTY;
 
 		for (i = 0; i < n; i++){
 				tmp = dist[i];
@@ -15,6 +15,7 @@ int chooseVertex(int *dist, int n, int *found){
 }
 
 void dijkstra(int SOURCE, int n, int **edge, int *dist){
+		int infinity = INFTY;
 		int i, j, count, *found;
 		found = (int*) calloc (n, sizeof(int));
 		for (i = 0; i < n; i++){
@@ -29,7 +30,8 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 				count++;
 				for (i = 0; i < n; i++){
 						if (!(found[i])){
-								dist[i] = min(dist[i], dist[j]+edge[j][i]);
+								int distplus = (edge[j][i] == infinity)? infinity: dist[j] + edge[j][i];
+								dist[i] = min(dist[i], distplus);
 						}
 				}
 		}

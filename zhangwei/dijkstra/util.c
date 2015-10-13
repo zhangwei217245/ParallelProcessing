@@ -74,3 +74,10 @@ char * getTimeString(){
 		sprintf(buff, "%s:%03lu", buff, now_milli);
 		return buff;
 }
+int min(int i1, int i2){
+		if (i2 < i1){
+				return i2;
+		} else {
+				return i1;
+		}
+}

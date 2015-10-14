@@ -33,10 +33,10 @@ int chooseVertex(int *dist, int n, int *found){
 void updateDist(int *dist, int n, int *found, int *row){
 		int infinity = INFTY;
 		int i;
-		int j = row[n];
+		int distJ = row[n];
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
-						int distplus = (row[i] == infinity)? infinity: dist[j] + row[i];
+						int distplus = (row[i] == infinity)? infinity: distJ + row[i];
 						dist[i] = min(dist[i], distplus);
 				}
 		}	
@@ -57,6 +57,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 		MPI_Request requestNull;
 		if (world_rank == 0) {
 				// Phase 1: Rank 0 prepares the data for all the other processes.
+				printf("Phase 1 started \n");
 				int i, j, count, *found;
 				found = (int*) calloc (n, sizeof(int));
 				for (i = 0; i < n; i++){
@@ -66,6 +67,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 
 				found[SOURCE] = 1;
 				count = 1;
+				printf("Phase 2 started \n");
 				// Phase 2: take the shorted one among all the paths from SOURCE to all the other nodes.
 				while ( count < n ){
 						// Divide messages, send them to all the processes asynchronously.
@@ -85,10 +87,12 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						// for rank 0, calculate the partial result for j locally.
 						j = chooseVertex(msgBuf, chunkSize, &msgBuf[chunkSize]);
 						// for other processes, use MPI_Recv to receive their corresponding partial results.
+						// and then, a global J (mininum) will be determined.
 						for ( i = 1; i < world_size; i++){
 								int j_tmp;
 								//TODO: Send from other processes after they call chooseVertex.
 								MPI_Recv(&j_tmp, 1, MPI_INT, i, count, MPI_COMM_WORLD, &status);
+								// determining of global J (mininum).
 								j_tmp = chunkSize * i + j_tmp;
 								if (dist[j_tmp] < dist[j]) {
 										j = j_tmp;
@@ -104,7 +108,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 								int start = chunkSize * i;
 								int *msg = appendIntArray(&dist[start], chunkSize, &found[start], chunkSize);
 								msg = appendIntArray(msg, chunkSize*2, &edge[j][start], chunkSize);
-								msg = appendIntArray(msg, chunkSize*3, &j, 1);
+								msg = appendIntArray(msg, chunkSize*3, &dist[j], 1);
 								if ( i == 0) {
 										// Message send to rank 0 will immediately received by rank 0 itself.	
 										// Basically copy the part of data into *_dist of rank 0;

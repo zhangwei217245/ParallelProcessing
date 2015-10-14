@@ -33,7 +33,7 @@ int chooseVertex(int *dist, int n, int *found){
 void updateDist(int *dist, int n, int *found, int *row){
 		int infinity = INFTY;
 		int i;
-		int j = dist[n*3];
+		int j = row[n];
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: dist[j] + row[i];
@@ -66,7 +66,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 
 				found[SOURCE] = 1;
 				count = 1;
-				printf("======== Phase 1 Done\n");
 				// Phase 2: take the shorted one among all the paths from SOURCE to all the other nodes.
 				while ( count < n ){
 						// Divide messages, send them to all the processes asynchronously.
@@ -99,7 +98,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						// Done with selecting the vertex which has the minimum distance with SOURCE.
 						found[j] = 1;
 						count++;
-						printf("========= Phase 2 done!\n");
 						// Phase 3: Updating the dist array in parallel.
 						// Send n/world_size data items to different process, let them update their corresponding data area. 
 						for (i = 0; i < world_size; i++){
@@ -114,7 +112,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 								} else {
 										// Sending messages to all other processes. 
 										// TODO: Recv in other processes, then they call updateDist
-										MPI_Send(msg, chunkSize*3, MPI_INT, i, count, MPI_COMM_WORLD);	
+										MPI_Send(msg, (chunkSize*3+1), MPI_INT, i, count, MPI_COMM_WORLD);	
 								}
 						}
 						updateDist(buff, chunkSize, &buff[chunkSize], &buff[chunkSize*2]);
@@ -125,7 +123,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 								MPI_Recv(&dist[start], chunkSize, MPI_INT, i, count, MPI_COMM_WORLD, &status);
 						}
 						
-						printf("=========Phase 3 done\n");
 				}
 		} else {
 				int cnt = 1;

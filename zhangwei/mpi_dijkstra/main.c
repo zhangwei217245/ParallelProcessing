@@ -44,8 +44,13 @@ int main(int argc, char * argv[]){
 				}
 				
 		}
+		
 
 		int n = world_size * work_load; 
+		if (SOURCE >= n){
+				printf("Error SOURCE input, should be less than load*P, where P is number of processes.\n");
+				SOURCE = 0;
+		}
 		int *dist = NULL;
 		int **edge = NULL;
 		if (world_rank == 0){
@@ -60,7 +65,11 @@ int main(int argc, char * argv[]){
 				int i;
 				printf("dist:[ ");
 				for (i = 0; i < n; i++){
-						printf("%d ", dist[i]);
+						if ( dist[i] > 1000000) {
+								printf("INFTY ");
+						} else {
+								printf("%d ", dist[i]);
+						}
 				}
 				printf("]");
 				printf("\n");

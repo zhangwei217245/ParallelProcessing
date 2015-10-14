@@ -12,7 +12,7 @@ void printMatrix(int **edge, int n){
 		int i, j, infinity = INFTY;
 		for(i = 0; i < n; i++){
 				for (j = 0; j < n; j++){
-						if ( infinity == edge[i][j] ){
+						if ( edge[i][j] == infinity){
 								printf("INFTY\t");
 						} else {
 								printf("%d\t", edge[i][j]);

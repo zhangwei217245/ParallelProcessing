@@ -9,16 +9,64 @@
 #include "util.h"
 #include "dijkstra.h"
 
+
+
 int main(int argc, char * argv[]){
-		int n = 5, i;
-		int *dist = (int *) calloc(sizeof(int), n);
-		int **edge = generateMatrix(n);
-		printMatrix(edge, n);
-		dijkstra(3 , n, edge, dist);
+		int world_size;
+		int world_rank;
 
-		for (i = 0; i < n; i++){
-				printf("%d ", dist[i]);
+		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
+		// Initialize the MPI environment
+		MPI_Init(&argc, &argv);
+
+		// Get the number of processes
+		MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+		// Get the rank of the processor
+		MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+		// Two variables by user input
+		int SOURCE=0, work_load=1;
+		
+		char source[]="-src";
+		char load[]="-load";
+		// Read args.
+		int i = 0;
+		for ( ; i < argc; i++){
+				if (strncmp(source, argv[i], 4) == 0 && (++i) < argc){
+						if (argv[i] != NULL){
+								SOURCE = aoti(argv[i]);
+						}
+				}
+				if (strncmp(load, argv[i], 5) == 0 && (++i) < argc){
+						if (argv[i] != NULL){
+								work_load = aoti(argv[i]);
+						}
+				}
+				
 		}
-		printf("\n");
 
+		int n = world_size * work_load; 
+		int *dist = NULL;
+		int **edge = NULL;
+		if (world_rank == 0){
+				dist = (int *) calloc(sizeof(int), n);
+				edge = generateMatrix(n);
+				printMatrix(edge, n);
+		}
+
+		dijkstra(SOURCE , n, edge, dist);
+
+		if ( world_rank == 0){
+				int i;
+				printf("dist:[ ");
+				for (i = 0; i < n; i++){
+						printf("%d ", dist[i]);
+				}
+				printf("]");
+				printf("\n");
+		}
+
+		// Finalize the MPI environment
+		MPI_Finalize();
+		return 0;
 }

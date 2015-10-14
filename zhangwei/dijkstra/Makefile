@@ -1,9 +1,9 @@
-CC=mpicc
-CFLAGS=-i_dynamic
-OBJ=mpi_dijkstra.out
+CC=gcc
+#CFLAGS=-i_dynamic
+OBJ=dijkstra.out
 UTIL=util.c 
 SRC=main.c dijkstra.c
-EXEC=mpirun
+#EXEC=mpirun
 
 OS=$(shell uname)
 ifeq ($(OS),Darwin)
@@ -13,12 +13,12 @@ else
 endif
 
 ${OBJ}: ${SRC} ${UTIL} 
-	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
+	${CC} -o $@ ${SRC} ${UTIL}
 
 
 .PHONY: run
 run:
-	@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		./${OBJ}
 
 .PHONY: clean
 clean:
@@ -28,7 +28,3 @@ clean:
 
 .PHONY: all
 all:	clean ${OBJ} run
-
-.PHONY: viewrst
-viewrst:	all
-	-more output/*	

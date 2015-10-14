@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include "util.h"
 #include "dijkstra.h"
-
+#include <mpi.h>
 
 
 int main(int argc, char * argv[]){
@@ -34,12 +34,12 @@ int main(int argc, char * argv[]){
 		for ( ; i < argc; i++){
 				if (strncmp(source, argv[i], 4) == 0 && (++i) < argc){
 						if (argv[i] != NULL){
-								SOURCE = aoti(argv[i]);
+								SOURCE = atoi(argv[i]);
 						}
 				}
 				if (strncmp(load, argv[i], 5) == 0 && (++i) < argc){
 						if (argv[i] != NULL){
-								work_load = aoti(argv[i]);
+								work_load = atoi(argv[i]);
 						}
 				}
 				

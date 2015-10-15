@@ -18,7 +18,7 @@ void getSizeAndRank(int *world_size, int *world_rank){
 }
 
 int chooseVertex(int *dist, int n, int *found){
-		int i, tmp, leastPosition;
+		int i, tmp, leastPosition=0;
 		int least = INFTY;
 
 		for (i = 0; i < n; i++){

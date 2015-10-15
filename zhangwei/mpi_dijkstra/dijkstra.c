@@ -34,6 +34,7 @@ void updateDist(int *dist, int n, int *found, int *row){
 		int infinity = INFTY;
 		int i;
 		int distJ = row[n];
+		printf("dist %d", distJ);
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: distJ + row[i];

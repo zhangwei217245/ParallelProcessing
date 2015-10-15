@@ -90,6 +90,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 										// TODO: Recv in other processes, then they call chooseVertex.
 										MPI_Send(msg, chunkSize*2, MPI_INT, i, count, MPI_COMM_WORLD);	
 								}
+								free(msg);
 						}
 						// for rank 0, calculate the partial result for j locally.
 						j = chooseVertex(msgBuf, chunkSize, &msgBuf[chunkSize]);
@@ -126,6 +127,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 										// TODO: Recv in other processes, then they call updateDist
 										MPI_Send(msg, (chunkSize*3+1), MPI_INT, i, count, MPI_COMM_WORLD);	
 								}
+								free(msg);
 						}
 						updateDist(buff, chunkSize, &buff[chunkSize], &buff[chunkSize*2]);
 						memcpy(dist, buff, chunkSize * sizeof(int));
@@ -151,4 +153,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 				}
 		}
 
+		free(msgBuf);
+		free(buff);
 }

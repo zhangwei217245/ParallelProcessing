@@ -73,6 +73,8 @@ int main(int argc, char * argv[]){
 				}
 				printf("]");
 				printf("\n");
+				free(dist);
+				free(edge);
 		}
 
 		// Finalize the MPI environment

@@ -28,6 +28,7 @@ int chooseVertex(int *dist, int n, int *found){
 						leastPosition = i;
 				}
 		}
+		printf("%d\n", leastPosition);
 		return leastPosition;
 }
 void updateDist(int *dist, int n, int *found, int *row){

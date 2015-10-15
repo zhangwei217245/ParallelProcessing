@@ -34,7 +34,7 @@ void updateDist(int *dist, int n, int *found, int *row){
 		int infinity = INFTY;
 		int i;
 		int distJ = row[n];
-		printf("dist %d", distJ);
+		printf("dist %d\n", distJ);
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: distJ + row[i];
@@ -103,6 +103,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						// Done with selecting the vertex which has the minimum distance with SOURCE.
 						found[j] = 1;
 						count++;
+						printf("Phase 3 started! j = %d\n", j);
 						// Phase 3: Updating the dist array in parallel.
 						// Send n/world_size data items to different process, let them update their corresponding data area. 
 						for (i = 0; i < world_size; i++){

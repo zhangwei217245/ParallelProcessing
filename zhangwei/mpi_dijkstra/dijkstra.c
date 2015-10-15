@@ -40,7 +40,7 @@ void updateDist(int *dist, int n, int *found, int *row){
 		int distJ = row[n];
 		int rank;
 		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-		printf("%d : dist %d\n", rank, distJ);
+		printf("%d : dist[j]= %d\n", rank, distJ);
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: distJ + row[i];

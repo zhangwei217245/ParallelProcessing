@@ -23,6 +23,7 @@ int chooseVertex(int *dist, int n, int *found){
 
 		for (i = 0; i < n; i++){
 				tmp = dist[i];
+				printf("%d ", tmp);
 				if ((!found[i]) && (tmp < least)){
 						least = tmp;
 						leastPosition = i;

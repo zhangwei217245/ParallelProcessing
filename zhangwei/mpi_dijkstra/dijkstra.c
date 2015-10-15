@@ -28,14 +28,18 @@ int chooseVertex(int *dist, int n, int *found){
 						leastPosition = i;
 				}
 		}
-		printf("%d\n", leastPosition);
+		int rank;
+		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+		printf("%d : leastPos: %d\n",rank, leastPosition);
 		return leastPosition;
 }
 void updateDist(int *dist, int n, int *found, int *row){
 		int infinity = INFTY;
 		int i;
 		int distJ = row[n];
-		printf("dist %d\n", distJ);
+		int rank;
+		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+		printf("%d : dist %d\n", rank, distJ);
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: distJ + row[i];

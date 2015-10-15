@@ -42,7 +42,11 @@ int **generateMatrix(int n){
 						} else if (j == infPos){
 								edge[i][j] = INFTY;
 						} else {
-								edge[i][j] = rand() % 20;
+								int val = rand() % 20;
+								if (val == 0){
+										val++;
+								}
+								edge[i][j] = val;
 						}
 				}		
 		}

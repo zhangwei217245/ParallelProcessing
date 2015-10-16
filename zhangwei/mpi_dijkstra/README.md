@@ -13,7 +13,7 @@ nodes of the graph)
 
 
 ## Overview of Algorithm 
-Two part of the dijkestra algorithm can be parallelized:
+Two parts of the dijkestra algorithm can be parallelized:
 
 **The 1st part:** The chooseVertex() function
 ```
@@ -32,15 +32,20 @@ int least = INFTY;
 return leastPosition;
 }
 ```
-For parallelizing the chooseVertex function the head node (rank_0) provide
-the every other processes with required data to calculate a local minimum,
-then the head node receives the calculated local minimum from all other
-processes and will calculated the global minimum.
+For parallelizing the chooseVertex function the master process (rank_0) provides
+all the processes with required data by MPI_Send, and all the processes (including master process)  
+will calculate a local minimum of their own and send the position for this local minimum back to master process, 
+then the master process receives all those local minimum positions from all the processes, and by applying offset on 
+the positions returned by each process and therefore comparing the elements in `dist[]` array indicated by the positions, 
+the master process is able to eventually determine the global minimum element in `dist[]` array and its related position `j`.
 
+The required data for each process contains:
 
+		1. part of the `dist[]` array whose length equals to n/p (n = length of `dist[]` array, p = number of processes)
+		2. part of the `found[]` array whose length equals to n/p (n = length of `found[]` array, p = number of processes)
     
-**The 2nd part:** The for loop which is responsible of calculating the minimum and update the
-dist[] array
+**The 2nd part:** The for loop which is responsible of calculating the minimum and updating the
+`dist[]` array
 ```
 #!c
 for (i = 0; i < n; i++){
@@ -48,12 +53,14 @@ for (i = 0; i < n; i++){
         dist[i] = min(dist[i], dist[j]+edge[j][i]);
 }
 ```
-For parallelizing this part of the code (for loop), the head process (rank_0) have 
-to send required data to every other processes. The required data contains:
-1)Full found[] array
-2)A part of the dist[] array (as much as chunkSize)
-3)dist[j] (which is the current global minimum)
-4)One row of edge[][] matrix (which contains the requisite data for every processes 
+For parallelizing this part of the code (for loop), the master process (rank_0) has
+to send required data to all the processes including itself. The required data for each process contains:
+
+		1. A part of the `dist[]` array whose length n/p (n = the length of `dist[]` array, p = number of processes)
+		2. A part of the `found[]` array whose length n/p (n = the length of `found[]` array, p = number of processes)
+		3. `dist[j]` (which is the current global minimum distance among all distances from SOURCE to all the other nodes)
+		4. The `j`th row of edge[][] matrix (which is length of n/p, n = the length of `dist[]` array, p = number of processes)
+
 to calculate the minimum and to update the dist[] array)
 
 Every process (including the rank_0 itself) have to calculated the minimum and
@@ -90,11 +97,14 @@ make
 
 ```
 #!sh
-make run NUM=n
+make run NUM=n ARGS="-load 4 -src 0"
 ```
 
-- Note: here, argument **NUM** here is used to specify the number of processes,
-**n** here can be any integer number.
+- **NUM** here is used to specify the number of processes, **n** here can be any integer number.
+- **ARGS `-load`**: you can pass the load for each process by argument `-load` which means the number of columns in the matrix each process will be in charge of.
+- **ARGS `-src`**: you can pass the SOURCE by argument `-src` to specify the `SOURCE` node.
+- The size of the matrix would be (NUM*load) * (NUM*load), namely, NUM*load is both the width and height of the matrix.
+
 
 
 # Observing the output of the program
@@ -106,3 +116,14 @@ successfully run the program.
 #!sh
 more output/*
 ```
+
+# All-in-one project building
+
+Simply run the command below:
+```
+#!sh
+make viewrst NUM=n ARGS="-load 4 -src 0"
+```
+And this command will clean the project, compile the program, run it and show you the output with `more` utility.
+
+

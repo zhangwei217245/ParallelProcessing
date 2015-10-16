@@ -7,8 +7,6 @@
 #include "dijkstra.h"
 #include <mpi.h>
 
-
-
 void getSizeAndRank(int *world_size, int *world_rank){
 		
 		// Get the number of processes

@@ -4,7 +4,6 @@
  *
  *
  */
-
 #include <stdio.h>
 #include "util.h"
 #include "dijkstra.h"
@@ -41,9 +40,7 @@ int main(int argc, char * argv[]){
 								work_load = atoi(argv[i]);
 						}
 				}
-				
 		}
-		
 
 		int n = world_size * work_load; 
 		if (SOURCE >= n){
@@ -60,9 +57,10 @@ int main(int argc, char * argv[]){
 
 		dijkstra(SOURCE , n, edge, dist);
 		if ( world_rank == 0){
+				int infinity = INFTY;
 				printf("dist:[ ");
 				for (i = 0; i < n; i++){
-						if ( dist[i] > 1000000) {
+						if ( dist[i] >= infinity) {
 								printf("INFTY ");
 						} else {
 								printf("%d ", dist[i]);

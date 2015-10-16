@@ -59,7 +59,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 		getSizeAndRank(&world_size, &world_rank);
 		int chunkSize = n / world_size;
 		int *msgBuf = (int *)calloc(sizeof(int), chunkSize*2);
-		int *buff = (int *) calloc(sizeof(int), chunkSize * 3);
+		int *buff = (int *) calloc(sizeof(int), (chunkSize*3+1));
 		MPI_Status status;
 		MPI_Request requestNull;
 		if (world_rank == 0) {

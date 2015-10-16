@@ -23,7 +23,6 @@ int chooseVertex(int *dist, int n, int *found){
 
 		for (i = 0; i < n; i++){
 				tmp = dist[i];
-				printf("%d ", tmp);
 				if ((!found[i]) && (tmp < least)){
 						least = tmp;
 						leastPosition = i;
@@ -31,7 +30,6 @@ int chooseVertex(int *dist, int n, int *found){
 		}
 		int rank;
 		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-		printf("%d : leastPos: %d\n",rank, leastPosition);
 		return leastPosition;
 }
 void updateDist(int *dist, int n, int *found, int *row){
@@ -40,7 +38,6 @@ void updateDist(int *dist, int n, int *found, int *row){
 		int distJ = row[n];
 		int rank;
 		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-		printf("%d : dist[j]= %d\n", rank, distJ);
 		for (i = 0; i < n; i++){
 				if (!(found[i])){
 						int distplus = (row[i] == infinity)? infinity: distJ + row[i];
@@ -64,7 +61,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 		MPI_Request requestNull;
 		if (world_rank == 0) {
 				// Phase 1: Rank 0 prepares the data for all the other processes.
-				printf("Phase 1 started \n");
 				int i, j, count, *found;
 				found = (int*) calloc (n, sizeof(int));
 				for (i = 0; i < n; i++){
@@ -74,7 +70,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 
 				found[SOURCE] = 1;
 				count = 1;
-				printf("Phase 2 started \n");
 				// Phase 2: take the shorted one among all the paths from SOURCE to all the other nodes.
 				while ( count < n ){
 						// Divide messages, send them to all the processes asynchronously.
@@ -87,7 +82,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 										MPI_Sendrecv(msg, chunkSize*2, MPI_INT, i, count, msgBuf, chunkSize*2, MPI_INT, i, count, MPI_COMM_WORLD, &status);
 								} else {
 										// Sending messages to all other processes. 
-										// TODO: Recv in other processes, then they call chooseVertex.
+										// Recv in other processes, then they call chooseVertex.
 										MPI_Send(msg, chunkSize*2, MPI_INT, i, count, MPI_COMM_WORLD);	
 								}
 								free(msg);
@@ -98,7 +93,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						// and then, a global J (mininum) will be determined.
 						for ( i = 1; i < world_size; i++){
 								int j_tmp;
-								//TODO: Send from other processes after they call chooseVertex.
+								// Message sent from other processes after they call chooseVertex.
 								MPI_Recv(&j_tmp, 1, MPI_INT, i, count, MPI_COMM_WORLD, &status);
 								// determining of global J (mininum).
 								j_tmp = chunkSize * i + j_tmp;
@@ -110,7 +105,6 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						// Done with selecting the vertex which has the minimum distance with SOURCE.
 						found[j] = 1;
 						count++;
-						printf("Phase 3 started! j = %d\n", j);
 						// Phase 3: Updating the dist array in parallel.
 						// Send n/world_size data items to different process, let them update their corresponding data area. 
 						for (i = 0; i < world_size; i++){
@@ -124,7 +118,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 										MPI_Sendrecv(msg, (chunkSize*3+1), MPI_INT, i, count, buff, (chunkSize*3+1), MPI_INT, i, count, MPI_COMM_WORLD, &status);
 								} else {
 										// Sending messages to all other processes. 
-										// TODO: Recv in other processes, then they call updateDist
+										// To be Received in other processes, then they call updateDist
 										MPI_Send(msg, (chunkSize*3+1), MPI_INT, i, count, MPI_COMM_WORLD);	
 								}
 								free(msg);
@@ -133,10 +127,9 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						memcpy(dist, buff, chunkSize * sizeof(int));
 						for ( i = 1; i < world_size; i++){
 								int start = chunkSize * i;
-								// TODO: Send from other processes after they call updateDist
+								// Message Sent from other processes after they call updateDist
 								MPI_Recv(&dist[start], chunkSize, MPI_INT, i, count, MPI_COMM_WORLD, &status);
 						}
-						printf("rank 0, Phase 3 done\n");
 				}
 		} else {
 				int cnt = 1;
@@ -145,13 +138,11 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						MPI_Recv(msgBuf, chunkSize*2, MPI_INT, 0, cnt, MPI_COMM_WORLD, &status);
 						int j_tmp = chooseVertex(msgBuf, chunkSize, &msgBuf[chunkSize]);
 						MPI_Send(&j_tmp,1, MPI_INT, 0, cnt, MPI_COMM_WORLD);
-						printf("rank %d Phase 2 Done\n", world_rank);
 						cnt++;
 						// Receive the message, update the dist, send back the result.
 						MPI_Recv(buff, (chunkSize*3+1), MPI_INT, 0, cnt, MPI_COMM_WORLD, &status);
 						updateDist(buff, chunkSize, &buff[chunkSize], &buff[chunkSize*2]);
 						MPI_Send(buff, chunkSize, MPI_INT, 0, cnt, MPI_COMM_WORLD);
-						printf("rank %d Phase 3 Done\n", world_rank);
 				}
 		}
 		free(msgBuf);

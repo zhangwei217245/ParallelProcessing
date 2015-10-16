@@ -60,9 +60,7 @@ int main(int argc, char * argv[]){
 		}
 
 		dijkstra(SOURCE , n, edge, dist);
-	    printf("rank %d, finish dijkstra\n", world_rank);	
 		if ( world_rank == 0){
-				printf("rank 0, finish dijkstra\n");
 				printf("dist:[ ");
 				for (i = 0; i < n; i++){
 						if ( dist[i] > 1000000) {
@@ -74,7 +72,6 @@ int main(int argc, char * argv[]){
 				printf("]");
 				printf("\n");
 		}
-		printf("before finalize");
 		// Finalize the MPI environment
 		MPI_Finalize();
 		return 0;

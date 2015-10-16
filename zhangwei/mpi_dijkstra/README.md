@@ -41,8 +41,8 @@ the master process is able to eventually determine the global minimum element in
 
 The required data for each process contains:
 
-		1. part of the `dist[]` array whose length equals to n/p (n = length of `dist[]` array, p = number of processes)
-		2. part of the `found[]` array whose length equals to n/p (n = length of `found[]` array, p = number of processes)
+1. part of the `dist[]` array whose length equals to n/p (n = length of `dist[]` array, p = number of processes)
+2. part of the `found[]` array whose length equals to n/p (n = length of `found[]` array, p = number of processes)
     
 **The 2nd part:** The for loop which is responsible of calculating the minimum and updating the
 `dist[]` array
@@ -56,10 +56,10 @@ for (i = 0; i < n; i++){
 For parallelizing this part of the code (for loop), the master process (rank_0) has
 to send required data to all the processes including itself. The required data for each process contains:
 
-		1. A part of the `dist[]` array whose length n/p (n = the length of `dist[]` array, p = number of processes)
-		2. A part of the `found[]` array whose length n/p (n = the length of `found[]` array, p = number of processes)
-		3. `dist[j]` (which is the current global minimum distance among all distances from SOURCE to all the other nodes)
-		4. The `j`th row of edge[][] matrix (which is length of n/p, n = the length of `dist[]` array, p = number of processes)
+1. A part of the `dist[]` array whose length n/p (n = the length of `dist[]` array, p = number of processes)
+2. A part of the `found[]` array whose length n/p (n = the length of `found[]` array, p = number of processes)
+3. `dist[j]` (which is the current global minimum distance among all distances from SOURCE to all the other nodes)
+4. The `j`th row of edge[][] matrix (which is length of n/p, n = the length of `dist[]` array, p = number of processes)
 
 to calculate the minimum and to update the dist[] array)
 

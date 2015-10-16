@@ -14,7 +14,6 @@
 int main(int argc, char * argv[]){
 		int world_size;
 		int world_rank;
-
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
 		MPI_Init(&argc, &argv);

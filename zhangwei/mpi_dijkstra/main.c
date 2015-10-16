@@ -60,8 +60,9 @@ int main(int argc, char * argv[]){
 		}
 
 		dijkstra(SOURCE , n, edge, dist);
-
+		
 		if ( world_rank == 0){
+				print("rank 0, finish dijkstra\n");
 				int i;
 				printf("dist:[ ");
 				for (i = 0; i < n; i++){

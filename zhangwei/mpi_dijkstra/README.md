@@ -12,7 +12,16 @@ equal to N^2/P (which P is the number of processes and N is the number of the
 nodes of the graph)
 
 
-## Overview of Algorithm 
+## Overview of Parallelization
+
+Every process (including the rank_0 itself) has to calculate the minimum and
+also has to update the part of the `dist[]` array which they are responsible
+for. Then the master process receives every different part of the dist[] array from
+all processes and calculate the new (current) global minimum `j`. Then the whole 
+procedure will go on, until all the elements of `found[]` array will be 1. In that
+situation, when the procedure ends the `dist[]` array will be the eventual merged result. 
+
+
 Two parts of the dijkestra algorithm can be parallelized:
 
 **The 1st part:** The chooseVertex() function
@@ -62,13 +71,6 @@ to send required data to all the processes including itself. The required data f
 4. The `j`th row of edge[][] matrix (which is length of n/p, n = the length of `dist[]` array, p = number of processes)
 
 to calculate the minimum and to update the dist[] array)
-
-Every process (including the rank_0 itself) have to calculated the minimum and
-also have to update the part of the dist[] array which they are responsible
-for. Then the head node receives every different part of the dist[] array from
-all processes and calculate the new (current) global minimum (j). Then the
-process will go on, until the all elements of found[] array will be 1. On that
-situation the answer is the merged dist[] array.
 
 ## Overview of testing code
 

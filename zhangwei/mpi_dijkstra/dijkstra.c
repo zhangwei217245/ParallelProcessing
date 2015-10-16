@@ -136,7 +136,7 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 								// TODO: Send from other processes after they call updateDist
 								MPI_Recv(&dist[start], chunkSize, MPI_INT, i, count, MPI_COMM_WORLD, &status);
 						}
-						
+						printf("rank 0, Phase 3 done\n");
 				}
 		} else {
 				int cnt = 1;
@@ -145,14 +145,15 @@ void dijkstra(int SOURCE, int n, int **edge, int *dist){
 						MPI_Recv(msgBuf, chunkSize*2, MPI_INT, 0, cnt, MPI_COMM_WORLD, &status);
 						int j_tmp = chooseVertex(msgBuf, chunkSize, &msgBuf[chunkSize]);
 						MPI_Send(&j_tmp,1, MPI_INT, 0, cnt, MPI_COMM_WORLD);
+						printf("rank %d Phase 2 Done\n", world_rank);
 						cnt++;
 						// Receive the message, update the dist, send back the result.
 						MPI_Recv(buff, (chunkSize*3+1), MPI_INT, 0, cnt, MPI_COMM_WORLD, &status);
 						updateDist(buff, chunkSize, &buff[chunkSize], &buff[chunkSize*2]);
 						MPI_Send(buff, chunkSize, MPI_INT, 0, cnt, MPI_COMM_WORLD);
+						printf("rank %d Phase 3 Done\n", world_rank);
 				}
 		}
-
 		free(msgBuf);
 		free(buff);
 }

@@ -14,7 +14,8 @@ nodes of the graph)
 
 ## Overview of Algorithm 
 Two part of the dijkestra algorithm can be parallelized:
-**The 1st part:** The chooseVertex function
+
+**The 1st part:** The chooseVertex() function
 ```
 #!c
 chooseVertex(int *dist, int n, int *found){
@@ -36,6 +37,8 @@ the every other processes with required data to calculate a local minimum,
 then the head node receives the calculated local minimum from all other
 processes and will calculated the global minimum.
 
+
+    
 **The 2nd part:** The for loop which is responsible of calculating the minimum and update the
 dist[] array
 ```
@@ -45,7 +48,6 @@ for (i = 0; i < n; i++){
         dist[i] = min(dist[i], dist[j]+edge[j][i]);
 }
 ```
-**For the 2nd part:**
 For parallelizing this part of the code (for loop), the head process (rank_0) have 
 to send required data to every other processes. The required data contains:
 1)Full found[] array

@@ -21,7 +21,6 @@ all processes and calculate the new (current) global minimum `j`. Then the whole
 procedure will go on, until all the elements of `found[]` array will be 1. In that
 situation, when the procedure ends the `dist[]` array will be the eventual merged result. 
 
-## Detail of Parallelization
 
 Two parts of the dijkestra algorithm can be parallelized:
 
@@ -70,6 +69,8 @@ to send required data to all the processes including itself. The required data f
 2. A part of the `found[]` array whose length n/p (n = the length of `found[]` array, p = number of processes)
 3. `dist[j]` (which is the current global minimum distance among all distances from SOURCE to all the other nodes)
 4. The `j`th row of edge[][] matrix (which is length of n/p, n = the length of `dist[]` array, p = number of processes)
+
+to calculate the minimum and to update the dist[] array)
 
 ## Overview of testing code
 

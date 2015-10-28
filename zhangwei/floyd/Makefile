@@ -1,8 +1,8 @@
 CC=gcc
 #CFLAGS=-i_dynamic
-OBJ=dijkstra.out
+OBJ=floyd.out
 UTIL=util.c 
-SRC=main.c dijkstra.c
+SRC=main.c floyd.c
 #EXEC=mpirun
 
 OS=$(shell uname)

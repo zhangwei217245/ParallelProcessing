@@ -14,6 +14,7 @@ void printMatrix(int **edge, int n){
 				}
 				printf("\n");
 		}
+		printf("\n");
 }
 int **generateMatrix(int n){
 		int i, j;

@@ -11,8 +11,7 @@ int ** floyd(int n, int **original){
 		while (k < n){
 				for ( i = 0 ; i < n ; i++){
 						for (j = 0; j < n; j++){
-								int infinity = INFTY;
-								int sum = (original[i][k] == infinity || original[k][j] == infinity) ? infinity : original[i][k]+original[k][j];
+								int sum = safesum(original[i][k],original[k][j]);
 								tmp[i][j] = min(original[i][j], sum);	
 						}
 				}

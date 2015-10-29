@@ -1,4 +1,5 @@
 #include <unistd.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -7,10 +8,8 @@
 
 void printMatrix(int **edge, int n);
 int **generateMatrix(int n);
-int clk_gettime(int clk_id, struct timespec* t);
+int safesum(int s1, int s2);
 double lg(double n);
 double flooor(double n);
 int ceiling(double n);
-char * getTimestamp();
-char * getTimeString();
 int min(int i1, int i2);

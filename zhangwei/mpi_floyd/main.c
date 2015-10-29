@@ -6,7 +6,7 @@
  */
 #include <stdio.h>
 #include "util.h"
-#include "dijkstra.h"
+#include "floyd.h"
 #include <mpi.h>
 
 
@@ -55,7 +55,6 @@ int main(int argc, char * argv[]){
 				printMatrix(edge, n);
 		}
 
-		dijkstra(SOURCE , n, edge, dist);
 		if ( world_rank == 0){
 				int infinity = INFTY;
 				printf("dist:[ ");

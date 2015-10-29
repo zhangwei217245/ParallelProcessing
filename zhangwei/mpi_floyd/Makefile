@@ -4,15 +4,15 @@
 CC=mpicc
 CFLAGS=-i_dynamic
 OBJ=mpi_floyd.out
-UTIL=util.c 
-SRC=main.c floyd.c
+UTIL=timeutil.c
+SRC=main.c floyd.c util.c
 EXEC=mpirun
 
 OS=$(shell uname)
 ifeq ($(OS),Darwin)
-		UTIL=util_osx.c
+		UTIL=timeutil_osx.c
 else
-		UTIL=util.c
+		UTIL=timeutil.c
 endif
 
 ${OBJ}: ${SRC} ${UTIL} 
@@ -26,6 +26,7 @@ run:
 .PHONY: clean
 clean:
 	-rm -rf ${OBJ}
+	-rm -rf *.out
 	-rm -rf *.btr
 	-rm -rf output/
 

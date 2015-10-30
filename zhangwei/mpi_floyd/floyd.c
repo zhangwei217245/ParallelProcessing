@@ -18,7 +18,7 @@ int ** floyd(int n, int **original){
 		int sqrt_p = (int)sqrt((double)world_size);
 
 		// Calculating the size of submatrix,namely the grid size;
-		int grid_size = world_size / sqrt_p;
+		int grid_size = n / sqrt_p;
 
 		// Initialize buffer for every process to receive message
 		int **buf;
@@ -55,20 +55,21 @@ int ** floyd(int n, int **original){
 		//
 		// process 0 distributes the data among P all processes
 		if (world_rank == 0){
-				for (k = 0; k < world_size; k++){
-						int R = world_size / sqrt_p;
-						int C = world_size % sqrt_p;
-						for (i = R * grid_size; i < (R+1) * grid_size; i++){
-								int start_pos = C * grid_size;
-								MPI_Send(&original[i][start_pos], grid_size, MPI_INT, k, 0, MPI_COMM_WORLD);
+				for (i = 0; i < grid_size; i++){
+						for (k = 0; k < world_size; k++){
+								int R = k / sqrt_p * grid_size + i;
+								int C = k % sqrt_p * grid_size;
+								MPI_Send(&original[R][C], grid_size, MPI_INT, k, 0, MPI_COMM_WORLD);
 						}
 				}
+				printf("processor 0 done with the distribution\n");
 		}
 		// every process is receiving the data chunk from process 0
 		MPI_Status status;
 		for (i = 0; i < grid_size; i++){
-				MPI_Recv(&buf[i], grid_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+				MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
 		}
+		printMatrix(buf, grid_size);
 		//
 		// each process enters into the while loop, run the loop for n times
 		k = 0;
@@ -93,6 +94,7 @@ int ** floyd(int n, int **original){
 								MPI_Bcast(&horz_buff, grid_size, MPI_INT, p_row, vert_comms[vert_comm_idx]);
 						}
 				}
+				printf("broadCast the kth row done\n");
 				// find the senders in the column, and they will broadcast the message to their sibiling processes horizontally. 
 				for (i = 0; i < sqrt_p; i++){
 						int p_col = si + i * sqrt_p;
@@ -108,18 +110,20 @@ int ** floyd(int n, int **original){
 								MPI_Bcast(&vert_buff, grid_size, MPI_INT, p_col, horz_comms[horz_comm_idx]);
 						}
 				}
+				printf("broadCast the kth column done\n");
 				// Calculate the minimum value and update the element i and j
 				for ( i = 0 ; i < grid_size ; i++){
 						for (j = 0; j < grid_size; j++){
 								buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 						}
 				}
+				printf("calculate the minimum and update done \n");
 		}
 
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.
 		for (i = 0; i < grid_size; i++){
-				MPI_Send(&buf[i], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
+				MPI_Send(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
 		}		
 		// the master process will receive the data row by row from all the processes
 		// and put them in to the right place of the original matrix.
@@ -129,11 +133,9 @@ int ** floyd(int n, int **original){
 				MPI_Status status;
 				for (i = 0; i < grid_size; i++){
 						for (k = 0; k < world_size; k++){
-						
-								int orig_row = k / sqrt_p * grid_size + i;
-								int orig_col = k % sqrt_p * grid_size;
-
-								MPI_Recv(&original[orig_row][orig_col], grid_size, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+								int R = k / sqrt_p * grid_size + i;
+								int C = k % sqrt_p * grid_size;
+								MPI_Recv(&original[R][C], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 
 						}
 				}

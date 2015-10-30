@@ -51,7 +51,7 @@ int main(int argc, char * argv[]){
 		parseArgs(argc, argv, &n);	
 		if (sanityCheck(world_rank, world_size, n) < 0){
 				MPI_Finalize();
-				return -1;
+				return 0;
 		}
 		int **edge = NULL;
 		if (world_rank == 0){

@@ -91,7 +91,7 @@ int ** floyd(int n, int **original){
 						}
 						// for all processes in communicator[vert_comm_idx], call the bcast function.
 						if (world_rank % sqrt_p == vert_comm_idx){
-								MPI_Bcast(&horz_buff, grid_size, MPI_INT, p_row, vert_comms[vert_comm_idx]);
+								MPI_Bcast(&horz_buff, grid_size, MPI_INT, i, vert_comms[vert_comm_idx]);
 						}
 				}
 				printf("broadCast the kth row done\n");
@@ -104,12 +104,15 @@ int ** floyd(int n, int **original){
 								for (j = 0 ; j < grid_size ; j++){
 										vert_buff[j] = buf[j][k%grid_size];
 								}
+								printf("process %d is the sender for horizontal comm index %d\n", world_rank, horz_comm_idx);
 						}
 						// for all processes in communicator[horz_comm_idx], call the bcast function.
 						if (world_rank / sqrt_p == horz_comm_idx) {
-								MPI_Bcast(&vert_buff, grid_size, MPI_INT, p_col, horz_comms[horz_comm_idx]);
+								printf("process %d running bcast for horizontal comm index %d\n", world_rank, horz_comm_idx);
+								MPI_Bcast(&vert_buff, grid_size, MPI_INT, i, horz_comms[horz_comm_idx]);
 						}
 				}
+
 				printf("broadCast the kth column done\n");
 				// Calculate the minimum value and update the element i and j
 				for ( i = 0 ; i < grid_size ; i++){
@@ -118,6 +121,7 @@ int ** floyd(int n, int **original){
 						}
 				}
 				printf("calculate the minimum and update done \n");
+				k++;
 		}
 
 		// collect the data from all processes and return it.

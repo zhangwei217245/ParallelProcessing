@@ -1,3 +1,9 @@
+/**
+ *  Author: Wei Zhang
+ *  Author: Ali Nosrati
+ *
+ *
+ */
 #include "timeutil.h"
 #include <math.h>
 #include <sys/time.h>

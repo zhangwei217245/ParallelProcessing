@@ -1,3 +1,9 @@
+/**
+ *  Author: Wei Zhang
+ *  Author: Ali Nosrati
+ *
+ *
+ */
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>

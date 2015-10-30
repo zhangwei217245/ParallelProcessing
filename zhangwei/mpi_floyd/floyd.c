@@ -1,3 +1,9 @@
+/**
+ *  Author: Wei Zhang
+ *  Author: Ali Nosrati
+ *
+ *
+ */
 #include "floyd.h"
 
 int ** floyd(int n, int **original){

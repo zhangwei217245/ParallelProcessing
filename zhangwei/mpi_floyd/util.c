@@ -1,3 +1,9 @@
+/**
+ *  Author: Wei Zhang
+ *  Author: Ali Nosrati
+ *
+ *
+ */
 #include "util.h"
 #include <math.h>
 

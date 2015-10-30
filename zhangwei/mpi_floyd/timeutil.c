@@ -1,3 +1,9 @@
+/**
+ *  Author: Wei Zhang
+ *  Author: Ali Nosrati
+ *
+ *
+ */
 #include "timeutil.h"
 
 int clk_gettime(int clk_id, struct timespec* t) {

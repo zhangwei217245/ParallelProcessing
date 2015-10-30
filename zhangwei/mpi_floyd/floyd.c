@@ -78,39 +78,22 @@ int ** floyd(int n, int **original){
 				int *vert_buff = (int *) calloc(sizeof(int),grid_size);
 
 				// The index for column and row which contains the sender processes.
-				int si = k/grid_size;
-				// find the senders in the row, and they will broadcast the message to their sibling processes vertically.
-				for ( i = 0; i < sqrt_p; i++){
-						int p_row = si * sqrt_p + i;
-						int vert_comm_idx = p_row % sqrt_p;
-						// if the current process is the sender, we fill the buffer. otherwise, we do nothing with the buffer.
-						if (world_rank == p_row){
-								for (j = 0; j < grid_size; j++){
-										horz_buff[j] = buf[k%grid_size][j];
-								}
-						}
-						// for all processes in communicator[vert_comm_idx], call the bcast function.
-						if (world_rank % sqrt_p == vert_comm_idx){
-								MPI_Bcast(&horz_buff, grid_size, MPI_INT, i, vert_comms[vert_comm_idx]);
+				int si = k / grid_size;
+				printf("si = %d\n", si);
+				// those processes at row si would be the sender.
+				if (world_rank / sqrt_p == si){
+						for (i = 0; i < grid_size; i++){
+								horz_buff[i] = buf[k % grid_size][i];
 						}
 				}
-				printf("broadCast the kth row done\n");
-				// find the senders in the column, and they will broadcast the message to their sibiling processes horizontally. 
+				if (world_rank % sqrt_p == si){
+						for (i = 0; i < grid_size; i++){
+								vert_buff[i] = buf[i][k % grid_size];
+						}
+				}
 				for (i = 0; i < sqrt_p; i++){
-						int p_col = si + i * sqrt_p;
-						int horz_comm_idx = p_col / sqrt_p;
-						// if the current process is the sender, we fill the buffer, otherwise, we do nothing with the buffer.
-						if (world_rank == p_col){
-								for (j = 0 ; j < grid_size ; j++){
-										vert_buff[j] = buf[j][k%grid_size];
-								}
-								printf("process %d is the sender for horizontal comm index %d\n", world_rank, horz_comm_idx);
-						}
-						// for all processes in communicator[horz_comm_idx], call the bcast function.
-						if (world_rank / sqrt_p == horz_comm_idx) {
-								printf("process %d running bcast for horizontal comm index %d\n", world_rank, horz_comm_idx);
-								MPI_Bcast(&vert_buff, grid_size, MPI_INT, i, horz_comms[horz_comm_idx]);
-						}
+						MPI_Bcast(&horz_buff, grid_size, MPI_INT, si, vert_comms[i]);
+						MPI_Bcast(&vert_buff, grid_size, MPI_INT, si, horz_comms[i]);
 				}
 
 				printf("broadCast the kth column done\n");

@@ -51,7 +51,13 @@ int safesum(int s1, int s2 ){
 double lg(double n){
 		return log(n)/log(2);
 }
+void getSizeAndRank(int *world_size, int *world_rank){
 
+		// Get the number of processes
+		MPI_Comm_size(MPI_COMM_WORLD, world_size);
+		// Get the rank of the processor
+		MPI_Comm_rank(MPI_COMM_WORLD, world_rank);
+}
 int ceiling(double n){
 		return (int)ceil(n);
 }

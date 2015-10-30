@@ -35,7 +35,8 @@ int ** floyd(int n, int **original){
 		int row_rank, row_size, col_rank, col_size;
 		getSizeAndRank(&row_size,&row_rank, row_comm);
 		getSizeAndRank(&col_size,&col_rank, col_comm);
-
+		
+		printf("rank=%d, row_rank=%d, col_rank=%d\n", world_rank, row_rank, col_rank);
 		// process 0 distributes the data among P all processes
 		if (world_rank == 0){
 				for (i = 0; i < grid_size; i++){
@@ -63,33 +64,22 @@ int ** floyd(int n, int **original){
 				// The index for column and row which contains the sender processes.
 				int si = k / grid_size;
 				printf("k = %d, si = %d\n", k, si);
-				// traverse each vertical communicator and each horzontal communicator, and broadcast the messages.
-				for (i = 0; i < sqrt_p; i++){
-						// for those processes inside vertical communicator 
-						//if (row_rank == i){
-								// those processes at row si would be the sender.
-								if (col_rank == si){
-										for (i = 0; i < grid_size; i++){
-												horz_buff[i] = buf[k % grid_size][i];
-										}
-								}
-								MPI_Bcast(&horz_buff, grid_size, MPI_INT, si, col_comm);
-						//}
-						printf("rank=%d, i=%d, horz_buff= ", world_rank, i);
-						printArray(horz_buff, grid_size);
-						// for those processes inside horizontal communicator 
-						//if (col_rank == i){
-								// those processes at column si would be the sender.
-								if (row_rank == si){
-										for (i = 0; i < grid_size; i++){
-												vert_buff[i] = buf[i][k % grid_size];
-										}
-								}
-								MPI_Bcast(&vert_buff, grid_size, MPI_INT, si, row_comm);
-						//}
-						printf("rank=%d, i= %d,  vert_buff= ", world_rank, i);
-						printArray(vert_buff, grid_size);
+				// Broadcast the kth row:
+				if (col_rank == si) {
+						for (j = 0; j < grid_size; j++){
+								horz_buff[j] = buf[k % grid_size][j];
+						}
 				}
+				MPI_Bcast(horz_buff, grid_size, MPI_INT, si, col_comm);
+
+
+				// Broadcast the kth column:
+				if (row_rank == si) {
+						for (j = 0; j < grid_size; j++){
+								vert_buff[j] = buf[j][k % grid_size];
+						}
+				}
+				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
 				for ( i = 0 ; i < grid_size ; i++){
@@ -116,7 +106,7 @@ int ** floyd(int n, int **original){
 						for (k = 0; k < world_size; k++){
 								int R = k / sqrt_p * grid_size + i;
 								int C = k % sqrt_p * grid_size;
-								MPI_Recv(&original[R][C], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
+								MPI_Recv(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD, &status);
 
 						}
 				}

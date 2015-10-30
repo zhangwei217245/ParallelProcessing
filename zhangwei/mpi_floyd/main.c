@@ -45,7 +45,7 @@ int main(int argc, char * argv[]){
 		MPI_Init(&argc, &argv);
 
 		// Get the number of processes and the rank of the processor
-		getSizeAndRank(&world_size, &world_rank);
+		getSizeAndRank(&world_size, &world_rank, MPI_COMM_WORLD);
 		// Parse the argument
 		int n=2;
 		parseArgs(argc, argv, &n);	

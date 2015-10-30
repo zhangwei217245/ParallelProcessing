@@ -66,7 +66,7 @@ int ** floyd(int n, int **original){
 				// traverse each vertical communicator and each horzontal communicator, and broadcast the messages.
 				for (i = 0; i < sqrt_p; i++){
 						// for those processes inside vertical communicator 
-						if (row_rank == i){
+						//if (row_rank == i){
 								// those processes at row si would be the sender.
 								if (col_rank == si){
 										for (i = 0; i < grid_size; i++){
@@ -74,11 +74,11 @@ int ** floyd(int n, int **original){
 										}
 								}
 								MPI_Bcast(&horz_buff, grid_size, MPI_INT, si, col_comm);
-						}
+						//}
 						printf("rank=%d, i=%d, horz_buff= ", world_rank, i);
 						printArray(horz_buff, grid_size);
 						// for those processes inside horizontal communicator 
-						if (col_rank == i){
+						//if (col_rank == i){
 								// those processes at column si would be the sender.
 								if (row_rank == si){
 										for (i = 0; i < grid_size; i++){
@@ -86,7 +86,7 @@ int ** floyd(int n, int **original){
 										}
 								}
 								MPI_Bcast(&vert_buff, grid_size, MPI_INT, si, row_comm);
-						}
+						//}
 						printf("rank=%d, i= %d,  vert_buff= ", world_rank, i);
 						printArray(vert_buff, grid_size);
 				}

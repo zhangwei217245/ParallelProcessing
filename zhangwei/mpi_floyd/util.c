@@ -77,3 +77,10 @@ int min(int i1, int i2){
 				return i1;
 		}
 }
+printArray(int *arr, int n){
+		int i;
+		for (i = 0; i < n; i ++){
+				printf("%d ", arr[i]);
+		}
+		printf("\n\n");
+}

@@ -86,14 +86,22 @@ int ** floyd(int n, int **original){
 								horz_buff[i] = buf[k % grid_size][i];
 						}
 				}
+				// those processes at column si would be the sender.
 				if (world_rank % sqrt_p == si){
 						for (i = 0; i < grid_size; i++){
 								vert_buff[i] = buf[i][k % grid_size];
 						}
 				}
+				// traverse each vertical communicator and each horzontal communicator, and broadcast the messages.
 				for (i = 0; i < sqrt_p; i++){
-						MPI_Bcast(&horz_buff, grid_size, MPI_INT, si, vert_comms[i]);
-						MPI_Bcast(&vert_buff, grid_size, MPI_INT, si, horz_comms[i]);
+						// for those processes inside vertical communicator i
+						if (world_rank % sqrt_p == i){
+								MPI_Bcast(&horz_buff, grid_size, MPI_INT, world_rank, vert_comms[i]);
+						}
+						// for those processes inside horizontal communicator i
+						if (world_rank / sqrt_p == i){
+								MPI_Bcast(&vert_buff, grid_size, MPI_INT, world_rank, horz_comms[i]);
+						}
 				}
 
 				printf("broadCast the kth column done\n");

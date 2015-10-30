@@ -22,3 +22,4 @@ double flooor(double n);
 int ceiling(double n);
 void getSizeAndRank(int *world_size, int *world_rank);
 int min(int i1, int i2);
+void printArray(int *arr, int n);

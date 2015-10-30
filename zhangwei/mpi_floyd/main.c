@@ -9,64 +9,58 @@
 #include "floyd.h"
 #include <mpi.h>
 
-
+void parseArgs(int argc, char* argv[], int *n){
+		char msize[]="-msize";
+		// Read args.
+		int i;
+		for ( i = 0; i < argc; i++){
+				if (strncmp(msize, argv[i], 6) == 0 && (++i) < argc){
+						if (argv[i] != NULL){
+								*n = atoi(argv[i]);
+						}
+				}
+		}
+}
+int sanityCheck(int world_rank, int world_size, int n){
+		double sqrt_p = sqrt((double)world_size);
+		double flor_sqrt_p = floor(sqrt_p);
+		if (sqrt_p != flor_sqrt_p){
+				if (world_rank == 0){
+						printf("The number of processes must be a perfect square number!\n");
+				}
+				return -1;
+		}
+		if (n % ((int)sqrt_p) != 0) {
+				if (world_rank == 0){
+						printf("The size of the matrix is not divisible by the square root of number of processes.\n");
+				}
+				return -1;
+		}
+		return 1;
+}
 int main(int argc, char * argv[]){
-		int world_size;
-		int world_rank;
+		int world_size, world_rank;
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
 		MPI_Init(&argc, &argv);
 
-		// Get the number of processes
-		MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
-		// Get the rank of the processor
-		MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-		// Two variables by user input
-		int SOURCE=0, work_load=1;
-		
-		char source[]="-src";
-		char load[]="-load";
-		// Read args.
-		int i = 0;
-		for ( ; i < argc; i++){
-				if (strncmp(source, argv[i], 4) == 0 && (++i) < argc){
-						if (argv[i] != NULL){
-								SOURCE = atoi(argv[i]);
-						}
-				}
-				if (strncmp(load, argv[i], 5) == 0 && (++i) < argc){
-						if (argv[i] != NULL){
-								work_load = atoi(argv[i]);
-						}
-				}
+		// Get the number of processes and the rank of the processor
+		getSizeAndRank(&world_size, &world_rank);
+		// Parse the argument
+		int n=2;
+		parseArgs(argc, argv, &n);	
+		if (sanityCheck(world_rank, world_size, n) < 0){
+				MPI_Finalize();
+				return -1;
 		}
-
-		int n = world_size * work_load; 
-		if (SOURCE >= n){
-				printf("Error SOURCE input, should be less than load*P, where P is number of processes.\n");
-				SOURCE = 0;
-		}
-		int *dist = NULL;
 		int **edge = NULL;
 		if (world_rank == 0){
-				dist = (int *) calloc(sizeof(int), n);
 				edge = generateMatrix(n);
 				printMatrix(edge, n);
 		}
-
+		floyd(n, edge);
 		if ( world_rank == 0){
-				int infinity = INFTY;
-				printf("dist:[ ");
-				for (i = 0; i < n; i++){
-						if ( dist[i] >= infinity) {
-								printf("INFTY ");
-						} else {
-								printf("%d ", dist[i]);
-						}
-				}
-				printf("]");
-				printf("\n");
+				printMatrix(edge, n);
 		}
 		// Finalize the MPI environment
 		MPI_Finalize();

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <limits.h>
+#include <math.h>
 #include <mpi.h>
 #define INFTY INT_MAX;
 

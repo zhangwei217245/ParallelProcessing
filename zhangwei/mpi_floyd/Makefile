@@ -32,3 +32,7 @@ clean:
 
 .PHONY: all
 all:	clean ${OBJ} run
+
+.PHONY: viewrst
+viewrst:	all
+	-more output/*	

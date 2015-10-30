@@ -70,7 +70,7 @@ int ** floyd(int n, int **original){
 								horz_buff[j] = buf[k % grid_size][j];
 						}
 				}
-				//MPI_Bcast(&horz_buff, grid_size, MPI_INT, si, col_comm);
+				MPI_Bcast(horz_buff, grid_size, MPI_INT, si, col_comm);
 
 
 				// Broadcast the kth column:
@@ -79,7 +79,7 @@ int ** floyd(int n, int **original){
 								vert_buff[j] = buf[j][k % grid_size];
 						}
 				}
-				//MPI_Bcast(&vert_buff, grid_size, MPI_INT, si, row_comm);
+				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
 				for ( i = 0 ; i < grid_size ; i++){

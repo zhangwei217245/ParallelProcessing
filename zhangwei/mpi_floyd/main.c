@@ -1,8 +1,6 @@
 /**
  *  Author: Wei Zhang
  *  Author: Ali Nosrati
- *
- *
  */
 #include <stdio.h>
 #include "util.h"

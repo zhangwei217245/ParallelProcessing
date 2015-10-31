@@ -56,13 +56,17 @@ int main(int argc, char * argv[]){
 		int **edge = NULL;
 		if (world_rank == 0){
 				edge = generateMatrix(n);
+				printf(":::::::::::::::: Original Matrix :::::::::::::::::\n");
 				printMatrix(edge, n);
+				printf("::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 		}
 		// do the parallel floyd algorithm
 		floyd(n, edge);
 		// show the result after parallel floyd algorithm
 		if ( world_rank == 0){
+				printf(":::::::::::::::: Original Matrix :::::::::::::::::\n");
 				printMatrix(edge, n);
+				printf("::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 		}
 		// Finalize the MPI environment
 		MPI_Finalize();

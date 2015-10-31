@@ -4,6 +4,10 @@
 
 **Wei Zhang** and **Ali Nosrati**
 
+## About due date:
+
+Permitted by Dr. Zhuang, the due date is changed to Nov 2nd, 2015, before 12.00pm.
+
 ## Description: 
 
 In this project, we were required to parallelize the Floyd algorithm to

@@ -57,7 +57,8 @@ int ** floyd(int n, int **original){
 		int *horz_buff = (int *) calloc(sizeof(int),grid_size);
 		int *vert_buff = (int *) calloc(sizeof(int),grid_size);
 		while (k < n){
-
+				printf("--======== k = %d =========--\n", k);
+				printMatrix(buf, grid_size);
 				// The index for column and row which contains the sender processes.
 				int si = k / grid_size;
 				// Broadcast the kth row vertically:
@@ -85,6 +86,9 @@ int ** floyd(int n, int **original){
 				}
 				k++;
 		}
+
+		printf("--======== k = %d =========--\n", k);
+		printMatrix(buf, grid_size);
 
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.

@@ -64,7 +64,7 @@ int main(int argc, char * argv[]){
 		floyd(n, edge);
 		// show the result after parallel floyd algorithm
 		if ( world_rank == 0){
-				printf(":::::::::::::::: Original Matrix :::::::::::::::::\n");
+				printf(":::::::::::::::::: Final Matrix ::::::::::::::::::\n");
 				printMatrix(edge, n);
 				printf("::::::::::::::::::::::::::::::::::::::::::::::::::\n");
 		}

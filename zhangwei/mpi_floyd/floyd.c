@@ -26,7 +26,7 @@ int ** floyd(int n, int **original){
 		for (i = 0; i < grid_size; i++){
 				buf[i] = (int *) calloc (sizeof(int),grid_size);
 		}
-
+		// Create row-based communicator and column-based communicator.
 		int r = world_rank / sqrt_p;
 		int c = world_rank % sqrt_p;
 		MPI_Comm row_comm, col_comm;
@@ -36,7 +36,6 @@ int ** floyd(int n, int **original){
 		getSizeAndRank(&row_size,&row_rank, row_comm);
 		getSizeAndRank(&col_size,&col_rank, col_comm);
 		
-		printf("rank=%d, row_rank=%d, col_rank=%d\n", world_rank, row_rank, col_rank);
 		// process 0 distributes the data among P all processes
 		if (world_rank == 0){
 				for (i = 0; i < grid_size; i++){
@@ -46,14 +45,12 @@ int ** floyd(int n, int **original){
 								MPI_Send(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD);
 						}
 				}
-				printf("processor 0 done with the distribution\n");
 		}
 		// every process is receiving the data chunk from process 0
 		MPI_Status status;
 		for (i = 0; i < grid_size; i++){
 				MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 		}
-		printMatrix(buf, grid_size);
 		//
 		// each process enters into the while loop, run the loop for n times
 		k = 0;
@@ -63,8 +60,7 @@ int ** floyd(int n, int **original){
 
 				// The index for column and row which contains the sender processes.
 				int si = k / grid_size;
-				printf("k = %d, si = %d\n", k, si);
-				// Broadcast the kth row:
+				// Broadcast the kth row vertically:
 				if (col_rank == si) {
 						for (j = 0; j < grid_size; j++){
 								horz_buff[j] = buf[k % grid_size][j];
@@ -73,7 +69,7 @@ int ** floyd(int n, int **original){
 				MPI_Bcast(horz_buff, grid_size, MPI_INT, si, col_comm);
 
 
-				// Broadcast the kth column:
+				// Broadcast the kth column horizontally:
 				if (row_rank == si) {
 						for (j = 0; j < grid_size; j++){
 								vert_buff[j] = buf[j][k % grid_size];
@@ -87,7 +83,6 @@ int ** floyd(int n, int **original){
 								buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 						}
 				}
-				printf("calculate the minimum and update done \n");
 				k++;
 		}
 
@@ -113,7 +108,7 @@ int ** floyd(int n, int **original){
 		}
 		
 
-		// before return, free all communicators
+		// before returning, free all communicators
 		MPI_Comm_free(&row_comm);
 		MPI_Comm_free(&col_comm);
 		// free all buffers

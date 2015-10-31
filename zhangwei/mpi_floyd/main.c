@@ -47,16 +47,20 @@ int main(int argc, char * argv[]){
 		// Parse the argument
 		int n=2;
 		parseArgs(argc, argv, &n);	
+		// Sanity Check, ensure that the parameters are valid.
 		if (sanityCheck(world_rank, world_size, n) < 0){
 				MPI_Finalize();
 				return 0;
 		}
+		// Generating the matrix and print it out.
 		int **edge = NULL;
 		if (world_rank == 0){
 				edge = generateMatrix(n);
 				printMatrix(edge, n);
 		}
+		// do the parallel floyd algorithm
 		floyd(n, edge);
+		// show the result after parallel floyd algorithm
 		if ( world_rank == 0){
 				printMatrix(edge, n);
 		}

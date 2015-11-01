@@ -12,6 +12,13 @@ int main(int argc, char *argv[]) {
 		MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 		MPI_Get_processor_name(processor_name, &namelen);
 
+		omp_set_num_threads(4);
+		#pragma omp parallel
+		{
+				int ID = omp_get_thread_num();
+				printf("ID=%d\n", ID);
+		}
+
 		#pragma omp parallel default(shared) private(iam, np)
 		{
 				np = omp_get_num_threads();

@@ -3,9 +3,18 @@
 
 CC=mpicc
 CFLAGS=-i_dynamic -openmp
+#EXFLAGS=--mca pls_rsh_agent ssh 
+EXFLAGS=
 OBJ=hello.out
-SRC=hello.c
+SRC=hello.c util.c
 EXEC=mpirun
+OS=$(shell uname)
+ifeq ($(OS),Darwin)
+		UTIL=timeutil_osx.c
+else
+		UTIL=timeutil.c
+endif
+
 
 
 ${OBJ}: ${SRC} ${UTIL} 
@@ -14,7 +23,7 @@ ${OBJ}: ${SRC} ${UTIL}
 
 .PHONY: run
 run:
-		@${EXEC} --mca pls_rsh_agent ssh -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		@${EXEC} ${EXFLAGS} -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

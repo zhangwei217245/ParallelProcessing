@@ -91,7 +91,7 @@ int ** floyd(int n, int **original){
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
-				unsigned long start = getTimestamp();
+				unsigned long start = getNanotime();
 
 				//omp_set_num_threads(grid_size);
 				//#pragma omp parallel
@@ -103,8 +103,8 @@ int ** floyd(int n, int **original){
 								}
 						}
 				//}
-				unsigned long end = getTimestamp();
-				printf("%lu miliseconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
+				unsigned long end = getNanotime();
+				printf("%lu nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
 				k++;
 		}
 
@@ -114,7 +114,7 @@ int ** floyd(int n, int **original){
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.
 		//
-		omp_set_num_threads(grid_size);
+		//omp_set_num_threads(grid_size);
 		//#pragma omp parallel
 		//{
 				//#pragma omp for

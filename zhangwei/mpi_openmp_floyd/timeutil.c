@@ -10,10 +10,14 @@ int clk_gettime(int clk_id, struct timespec* t) {
 		return clock_gettime(clk_id, t);
 }
 
-unsigned long getTimestamp(){
+unsigned long getNanotime(){
 		struct timespec tps;
 		clk_gettime(CLOCK_REALTIME, &tps);
-		unsigned long now = tps.tv_sec * 1000 + tps.tv_nsec / 1000000;
+		unsigned long now = tps.tv_sec * 1000000000 + tps.tv_nsec;
+		return now;
+}
+unsigned long getTimestamp(){
+		unsigned long now = getNanotime()/1000000;
 		return now;
 }
 

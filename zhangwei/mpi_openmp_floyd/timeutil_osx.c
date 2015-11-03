@@ -20,6 +20,7 @@ int clk_gettime(int clk_id, struct timespec* t) {
 }
 
 unsigned long getTimestamp(){
+		struct timespec tps;
 		clk_gettime(CLOCK_REALTIME, &tps);
 		unsigned long now = tps.tv_sec * 1000 + tps.tv_nsec / 1000000;
 		return now;
@@ -27,7 +28,6 @@ unsigned long getTimestamp(){
 
 char * getTimestampString(){
 		static char buff[20];
-		struct timespec tps;
 		unsigned long now = getTimestamp();
 		sprintf(buff, "%lu", now);
 		return buff;

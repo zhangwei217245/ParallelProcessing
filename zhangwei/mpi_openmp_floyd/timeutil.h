@@ -11,5 +11,6 @@
 #include <time.h>
 
 int clk_gettime(int clk_id, struct timespec* t);
-char * getTimestamp();
+unsigned long getTimestamp();
+char * getTimestampString();
 char * getTimeString();

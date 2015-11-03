@@ -9,11 +9,17 @@
 int clk_gettime(int clk_id, struct timespec* t) {
 		return clock_gettime(clk_id, t);
 }
-char * getTimestamp(){
-		static char buff[20];
-		struct timespec tps;
+
+unsigned long getTimestamp(){
 		clk_gettime(CLOCK_REALTIME, &tps);
 		unsigned long now = tps.tv_sec * 1000 + tps.tv_nsec / 1000000;
+		return now;
+}
+
+char * getTimestampString(){
+		static char buff[20];
+		struct timespec tps;
+		unsigned long now = getTimestamp();
 		sprintf(buff, "%lu", now);
 		return buff;
 }

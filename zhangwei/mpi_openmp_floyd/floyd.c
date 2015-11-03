@@ -40,9 +40,9 @@ int ** floyd(int n, int **original){
 
 		// process 0 distributes the data among P all processes
 		if (world_rank == 0){
-				omp_set_num_threads(grid_size);
-				#pragma omp parallel
-				{
+				//omp_set_num_threads(grid_size);
+				//#pragma omp parallel
+				//{
 						#pragma omp for
 						for (i = 0; i < grid_size; i++){
 								for (k = 0; k < world_size; k++){
@@ -51,18 +51,18 @@ int ** floyd(int n, int **original){
 										MPI_Send(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD);
 								}
 						}
-				}
+				//}
 		}
 		// every process is receiving the data chunk from process 0
 		MPI_Status status;
-		omp_set_num_threads(grid_size);
-		#pragma omp parallel
-		{
-				#pragma omp for
+		//omp_set_num_threads(grid_size);
+		//#pragma omp parallel
+		//{
+				//#pragma omp for
 				for (i = 0; i < grid_size; i++){
 						MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 				}
-		}
+		//}
 		//
 		// each process enters into the while loop, run the loop for n times
 		k = 0;
@@ -91,16 +91,17 @@ int ** floyd(int n, int **original){
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
-				omp_set_num_threads(grid_size);
-				#pragma omp parallel
-				{
+
+				//omp_set_num_threads(grid_size);
+				//#pragma omp parallel
+				//{
 						#pragma omp for
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
 										buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 								}
 						}
-				}
+				//}
 				k++;
 		}
 
@@ -111,23 +112,23 @@ int ** floyd(int n, int **original){
 		// every process will send the data in sub matrix row by row.
 		//
 		omp_set_num_threads(grid_size);
-		#pragma omp parallel
-		{
-				#pragma omp for
+		//#pragma omp parallel
+		//{
+				//#pragma omp for
 				for (i = 0; i < grid_size; i++){
 						MPI_Send(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
 				}
-		}
+		//}
 		// the master process will receive the data row by row from all the processes
 		// and put them in to the right place of the original matrix.
 
 		if (world_rank == 0){
 		// receiving the data from every processes row by row and save it to the original matrix 
 		//
-				omp_set_num_threads(grid_size);
-				#pragma omp parallel
-				{
-						#pragma omp for
+				//omp_set_num_threads(grid_size);
+				//#pragma omp parallel
+				//{
+						//#pragma omp for
 						for (i = 0; i < grid_size; i++){
 								for (k = 0; k < world_size; k++){
 										int R = k / sqrt_p * grid_size + i;
@@ -136,7 +137,7 @@ int ** floyd(int n, int **original){
 
 								}
 						}
-				}
+				//}
 		}
 		
 

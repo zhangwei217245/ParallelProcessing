@@ -3,6 +3,8 @@
 
 CC=mpicc
 CFLAGS=-i_dynamic -openmp
+#EXFLAGS=--mca pls_rsh_agent ssh 
+EXFLAGS=
 OBJ=mpi_openmp_floyd.out
 UTIL=timeutil.c
 SRC=main.c floyd.c util.c
@@ -16,12 +18,12 @@ else
 endif
 
 ${OBJ}: ${SRC} ${UTIL} 
-	${CC} -o $@ ${SRC} ${UTIL}
+	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
 
 
 .PHONY: run
 run:
-		@${EXEC} -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		@${EXEC} ${EXEFLAGS} -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

@@ -4,6 +4,7 @@
  *
  *
  */
+#include "omp.h"
 #include "floyd.h"
 
 int ** floyd(int n, int **original){

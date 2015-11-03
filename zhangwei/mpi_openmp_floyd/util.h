@@ -12,7 +12,7 @@
 #include <limits.h>
 #include <math.h>
 #include <mpi.h>
-#include <omp.h>
+#include "omp.h"
 
 #define INFTY 100;
 //INT_MAX;

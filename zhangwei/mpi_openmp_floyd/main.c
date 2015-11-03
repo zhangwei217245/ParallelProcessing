@@ -37,10 +37,10 @@ int sanityCheck(int world_rank, int world_size, int n){
 		return 1;
 }
 int main(int argc, char * argv[]){
-		int world_size, world_rank;
+		int world_size, world_rank, provided;
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
-		MPI_Init(&argc, &argv);
+		MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
 
 		// Get the number of processes and the rank of the processor
 		getSizeAndRank(&world_size, &world_rank, MPI_COMM_WORLD);

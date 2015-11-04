@@ -91,20 +91,21 @@ int ** floyd(int n, int **original){
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
-				unsigned long start = getNanotime();
+				double start, end;
+				start = MPI_Wtime();
 
-				//omp_set_num_threads(grid_size);
-				//#pragma omp parallel
-				//{
-						//#pragma omp for
+				omp_set_num_threads(grid_size);
+				#pragma omp parallel
+				{
+						#pragma omp for
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
 										buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 								}
 						}
-				//}
-				unsigned long end = getNanotime();
-				printf("%lu nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
+				}
+				end = MPI_Wtime();
+				printf("%f nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
 				k++;
 		}
 

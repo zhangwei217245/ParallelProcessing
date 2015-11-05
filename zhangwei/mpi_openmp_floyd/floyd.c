@@ -100,7 +100,8 @@ int ** floyd(int n, int **original){
 						#pragma omp for nowait
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
-										buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
+										//buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
+										int xx = i+j;
 								}
 						}
 				}

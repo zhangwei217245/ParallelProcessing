@@ -97,7 +97,9 @@ int ** floyd(int n, int **original){
 				omp_set_num_threads(grid_size);
 				#pragma omp parallel
 				{
-						#pragma omp for schedule(static, 1)
+
+						#pragma omp for
+						//#pragma omp for schedule(static, 1)
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
 										//buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));

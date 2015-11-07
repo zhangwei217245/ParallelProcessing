@@ -37,37 +37,41 @@ int ** floyd(int n, int **original){
 		getSizeAndRank(&row_size,&row_rank, row_comm);
 		getSizeAndRank(&col_size,&col_rank, col_comm);
 		
+		k = 0;
+		int *horz_buff = (int *) calloc(sizeof(int),grid_size);
+		int *vert_buff = (int *) calloc(sizeof(int),grid_size);
 
-		// process 0 distributes the data among P all processes
-		if (world_rank == 0){
-				//omp_set_num_threads(grid_size);
-				//#pragma omp parallel
-				//{
-						//#pragma omp for
+		omp_set_num_threads(grid_size);
+		#pragma omp parallel shared(horz_buff, vert_buff, original, buf)	
+		{
+				// process 0 distributes the data among P all processes
+				if (world_rank == 0){
+						#pragma omp barrier
+						//#pragma omp master
+						#pragma omp for private(i,k) 
 						for (i = 0; i < grid_size; i++){
 								for (k = 0; k < world_size; k++){
 										int R = k / sqrt_p * grid_size + i;
 										int C = k % sqrt_p * grid_size;
+										#pragma omp critical
 										MPI_Send(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD);
 								}
 						}
-				//}
-		}
-		// every process is receiving the data chunk from process 0
-		MPI_Status status;
-		//omp_set_num_threads(grid_size);
-		//#pragma omp parallel
-		//{
-				//#pragma omp for
+						#pragma omp barrier
+				}
+				// every process is receiving the data chunk from process 0
+				MPI_Status status;
+				#pragma omp barrier
+				//#pragma omp master
+				#pragma omp for private(i)
 				for (i = 0; i < grid_size; i++){
+						#pragma omp critical
 						MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 				}
-		//}
+				#pragma omp barrier
+		}
 		//
 		// each process enters into the while loop, run the loop for n times
-		k = 0;
-		int *horz_buff = (int *) calloc(sizeof(int),grid_size);
-		int *vert_buff = (int *) calloc(sizeof(int),grid_size);
 		while (k < n){
 				printf("--======== rank_%d : k = %d =========--\n", world_rank, k);
 				printMatrix(buf, grid_size);
@@ -79,6 +83,7 @@ int ** floyd(int n, int **original){
 								horz_buff[j] = buf[k % grid_size][j];
 						}
 				}
+				//#pragma omp critical
 				MPI_Bcast(horz_buff, grid_size, MPI_INT, si, col_comm);
 
 
@@ -88,27 +93,27 @@ int ** floyd(int n, int **original){
 								vert_buff[j] = buf[j][k % grid_size];
 						}
 				}
+				//#pragma omp critical
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
 				// Calculate the minimum value and update the element i and j
 				double start, end;
-				start = MPI_Wtime();
 
-				omp_set_num_threads(grid_size);
-				#pragma omp parallel
+				omp_set_num_threads(grid_size/(world_size/2));
+				start = MPI_Wtime();
+				#pragma omp parallel shared(buf, vert_buff, horz_buff)
 				{
 
-						#pragma omp for
-						//#pragma omp for schedule(static, 1)
+						//#pragma omp master
+						#pragma omp for private(i,j) 
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
-										//buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
-										int xx = i+j;
+										buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 								}
 						}
 				}
 				end = MPI_Wtime();
-				printf("%f nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
+				printf("%.10f nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
 				k++;
 		}
 
@@ -118,33 +123,37 @@ int ** floyd(int n, int **original){
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.
 		//
-		//omp_set_num_threads(grid_size);
-		//#pragma omp parallel
-		//{
-				//#pragma omp for
+		omp_set_num_threads(grid_size);
+		#pragma omp parallel shared (buf, original, grid_size)
+		{
+				#pragma omp barrier
+				//#pragma omp master
+				#pragma omp for private (i) 
 				for (i = 0; i < grid_size; i++){
+						#pragma omp critical
 						MPI_Send(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
 				}
-		//}
+				#pragma omp barrier
 		// the master process will receive the data row by row from all the processes
 		// and put them in to the right place of the original matrix.
 
-		if (world_rank == 0){
-		// receiving the data from every processes row by row and save it to the original matrix 
-		//
-				//omp_set_num_threads(grid_size);
-				//#pragma omp parallel
-				//{
-						//#pragma omp for
+				if (world_rank == 0){
+				// receiving the data from every processes row by row and save it to the original matrix 
+						#pragma omp barrier
+						//#pragma omp master
+						#pragma omp for private(i,k)
 						for (i = 0; i < grid_size; i++){
 								for (k = 0; k < world_size; k++){
 										int R = k / sqrt_p * grid_size + i;
 										int C = k % sqrt_p * grid_size;
-										MPI_Recv(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD, &status);
-
+										MPI_Status recv_status;
+										#pragma omp critical
+										MPI_Recv(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD, &recv_status);
 								}
 						}
-				//}
+						#pragma omp barrier
+				}
+
 		}
 		
 
@@ -154,6 +163,8 @@ int ** floyd(int n, int **original){
 		// free all buffers
 		free(vert_buff);
 		free(horz_buff);
+		free(buf[0]);
+		free(buf);
 		return original;
 
 }

@@ -1,14 +1,16 @@
 ## Author: Wei Zhang
 ## Author: Ali Nosrati
 
-CC=mpicc
+#MPI_HOME=/home/zhang56/mpich-install
+MPI_HOME=/home/zhang56/openmpi_1.10.1
+CC=$(MPI_HOME)/bin/mpicc
 CFLAGS=-i_dynamic -openmp
 #EXFLAGS=--mca pls_rsh_agent ssh 
 EXFLAGS=
 OBJ=mpi_openmp_floyd.out
 UTIL=timeutil.c
 SRC=main.c floyd.c util.c
-EXEC=mpirun
+EXEC=$(MPI_HOME)/bin/mpirun
 
 OS=$(shell uname)
 ifeq ($(OS),Darwin)

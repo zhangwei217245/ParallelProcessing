@@ -53,7 +53,7 @@ int ** floyd(int n, int **original){
 								for (k = 0; k < world_size; k++){
 										int R = k / sqrt_p * grid_size + i;
 										int C = k % sqrt_p * grid_size;
-										#pragma omp critical
+										//#pragma omp critical
 										MPI_Send(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD);
 								}
 						}
@@ -65,7 +65,7 @@ int ** floyd(int n, int **original){
 				//#pragma omp master
 				#pragma omp for private(i)
 				for (i = 0; i < grid_size; i++){
-						#pragma omp critical
+						//#pragma omp critical
 						MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 				}
 				#pragma omp barrier

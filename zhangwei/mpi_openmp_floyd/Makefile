@@ -2,7 +2,8 @@
 ## Author: Ali Nosrati
 
 #MPI_HOME=/home/zhang56/mpich-install
-MPI_HOME=/home/zhang56/openmpi_1.10.1
+#MPI_HOME=/home/zhang56/openmpi_1.10.1
+MPI_HOME=/lustre/work/newapps/openmpi-1.10.1.compile
 CC=$(MPI_HOME)/bin/mpicc
 CFLAGS=-i_dynamic -openmp
 #EXFLAGS=--mca pls_rsh_agent ssh 

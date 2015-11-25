@@ -1,13 +1,21 @@
 ## Author: Wei Zhang
 ## Author: Ali Nosrati
 
-CC=mpicc
-CFLAGS=-i_dynamic
-OBJ=mpi_floyd.out
+#MPI_HOME=/home/zhang56/mpich-install
+#MPI_HOME=/home/zhang56/openmpi_1.10.1
+#MPI_HOME=/lustre/work/newapps/openmpi-1.10.1.compile
+MPI_HOME=/lustre/work/newapps/mpich-3.1.4
+CC=$(MPI_HOME)/bin/mpicc
+CFLAGS=-i_dynamic -openmp
+#CFLAGS=
+#EXFLAGS=--mca pls_rsh_agent ssh 
+EXFLAGS=
+OBJ=mpi_openmp_floyd.out
 UTIL=timeutil.c
 SRC=main.c floyd.c util.c
-EXEC=mpirun
+EXEC=$(MPI_HOME)/bin/mpiexec
 
+WDIR=$(shell pwd)
 OS=$(shell uname)
 ifeq ($(OS),Darwin)
 		UTIL=timeutil_osx.c
@@ -16,12 +24,13 @@ else
 endif
 
 ${OBJ}: ${SRC} ${UTIL} 
-	${CC} -o $@ ${SRC} ${UTIL}
+	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
 
 
 .PHONY: run
 run:
-		@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		echo ##@${EXEC} ${EXEFLAGS} -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		@${EXEC} ${EXEFLAGS} -n ${NUM} ${WDIR}/${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

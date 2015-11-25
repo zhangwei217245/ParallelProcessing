@@ -1,12 +1,11 @@
 #Wei Zhang, Ali Nosrati
 
-CC=mpicc
+CC=/lustre/work/newapps/mpich-3.1.4/bin/mpicc
 CFLAGS=-i_dynamic
 OBJ=my_barrier.out
 UTIL=util.c 
 SRC=my_barrier.c 
-EXEC=mpirun
-
+EXEC=/lustre/work/newapps/mpich-3.1.4/bin/mpiexec
 
 ${OBJ}: ${SRC} ${UTIL} 
 	${CC} ${CFLAGS} -o $@ ${SRC} ${UTIL}
@@ -14,7 +13,7 @@ ${OBJ}: ${SRC} ${UTIL}
 
 .PHONY: run
 run:
-	@${EXEC} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+	@${EXEC} -n ${NUM}  ./${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

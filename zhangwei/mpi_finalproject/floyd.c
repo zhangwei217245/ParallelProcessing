@@ -71,7 +71,7 @@ int ** floyd(int n, int **original){
 				}
 				MPI_Bcast(horz_buff, grid_size, MPI_INT, si, col_comm);
 
-
+				printf("bcast 1\n");
 				// Broadcast the kth column horizontally:
 				if (row_rank == si) {
 						for (j = 0; j < grid_size; j++){
@@ -80,21 +80,22 @@ int ** floyd(int n, int **original){
 				}
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
 
+				printf("bcast 2\n");
 				// Calculate the minimum value and update the element i and j
 				double start, end;
 
-				omp_set_num_threads(grid_size/(world_size/2));
+				//omp_set_num_threads(grid_size/(world_size/2));
 				start = MPI_Wtime();
-				#pragma omp parallel shared(buf, vert_buff, horz_buff)
-				{
+				//#pragma omp parallel 
+				//{
 
-						#pragma omp for private(i,j) 
+						//#pragma omp for 
 						for ( i = 0 ; i < grid_size ; i++){
 								for (j = 0; j < grid_size; j++){
 										buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 								}
 						}
-				}
+				//}
 				end = MPI_Wtime();
 				printf("%.10f nano seconds used for doing the calculation on submatrix %d\n", end-start, world_rank);
 				k++;
@@ -106,27 +107,23 @@ int ** floyd(int n, int **original){
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.
 		//
-	
-	   	for (i = 0; i < grid_size; i++){
-	   			MPI_Send(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
-	   	}
+		for (i = 0; i < grid_size; i++){
+				MPI_Send(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD);
+		}
 		// the master process will receive the data row by row from all the processes
 		// and put them in to the right place of the original matrix.
 
-	   	if (world_rank == 0){
-	   	// receiving the data from every processes row by row and save it to the original matrix 
-	   			for (i = 0; i < grid_size; i++){
-	   					for (k = 0; k < world_size; k++){
-	   							int R = k / sqrt_p * grid_size + i;
-	   							int C = k % sqrt_p * grid_size;
-	   							MPI_Status recv_status;
-	   							MPI_Recv(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD, &recv_status);
-	   					}
-	   			}
-	   	}
-
-	
-	
+		if (world_rank == 0){
+		// receiving the data from every processes row by row and save it to the original matrix 
+				for (i = 0; i < grid_size; i++){
+						for (k = 0; k < world_size; k++){
+								int R = k / sqrt_p * grid_size + i;
+								int C = k % sqrt_p * grid_size;
+								MPI_Status recv_status;
+								MPI_Recv(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD, &recv_status);
+						}
+				}
+		}
 
 		// before returning, free all communicators
 		MPI_Comm_free(&row_comm);

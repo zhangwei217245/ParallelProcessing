@@ -4,7 +4,8 @@
 #MPI_HOME=/home/zhang56/mpich-install
 #MPI_HOME=/home/zhang56/openmpi_1.10.1
 #MPI_HOME=/lustre/work/newapps/openmpi-1.10.1.compile
-MPI_HOME=/lustre/work/newapps/mpich-3.1.4
+#MPI_HOME=/lustre/work/newapps/mpich-3.1.4
+MPI_HOME=/lustre/work/apps/openmpi
 CC=$(MPI_HOME)/bin/mpicc
 CFLAGS=-i_dynamic -openmp
 #CFLAGS=
@@ -29,8 +30,8 @@ ${OBJ}: ${SRC} ${UTIL}
 
 .PHONY: run
 run:
-		echo ##@${EXEC} ${EXEFLAGS} -np ${NUM} -x OMP_NUM_THREADS -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
-		@${EXEC} ${EXEFLAGS} -n ${NUM} ${WDIR}/${OBJ} ${ARGS}
+		@${EXEC} ${EXEFLAGS} -np ${NUM} -output-filename output/$(subst .out,,${OBJ}) ${OBJ} ${ARGS}
+		##@${EXEC} ${EXEFLAGS} -n ${NUM} ${WDIR}/${OBJ} ${ARGS}
 
 .PHONY: clean
 clean:

@@ -11,9 +11,7 @@
 #include <time.h>
 #include <limits.h>
 #include <math.h>
-#include <mpi.h>
-#include "omp.h"
-
+#include "mpi.h"
 #define INFTY 100;
 //INT_MAX;
 

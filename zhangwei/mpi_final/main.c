@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "util.h"
 #include "floyd.h"
-#include <mpi.h>
+#include "mpi.h"
 
 void parseArgs(int argc, char* argv[], int *n){
 		char msize[]="-msize";
@@ -37,11 +37,11 @@ int sanityCheck(int world_rank, int world_size, int n){
 		return 1;
 }
 int main(int argc, char * argv[]){
-		int world_size, world_rank, provided;
+		int world_size, world_rank;
 		// **********  INITIALIZING + PROCESS INFO RETRIEVE ***********
 		// Initialize the MPI environment
-		MPI_Init_thread(&argc, &argv, MPI_THREAD_SERIALIZED, &provided);
-		printf("required = %d and provided = %d \n", MPI_THREAD_MULTIPLE, provided);
+		MPI_Init(&argc, &argv);
+
 		// Get the number of processes and the rank of the processor
 		getSizeAndRank(&world_size, &world_rank, MPI_COMM_WORLD);
 		// Parse the argument

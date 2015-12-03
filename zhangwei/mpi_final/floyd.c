@@ -37,19 +37,14 @@ int ** floyd(int n, int **original){
 		getSizeAndRank(&row_size,&row_rank, row_comm);
 		getSizeAndRank(&col_size,&col_rank, col_comm);
 		
-		printf("got row_rank and col_rank\n");
 		// process 0 distributes the data among P all processes
 		if (world_rank == 0){
-				//printf("rank 0 start to send\n");
 				for (i = 0; i < grid_size; i++){
 						for (k = 0; k < world_size; k++){
 								int R = k / sqrt_p * grid_size + i;
 								int C = k % sqrt_p * grid_size;
 								
-								//printf("R=%d, C=%d\n", R, C);
-								//int error = 
 								MPI_Send(&original[R][C], grid_size, MPI_INT, k, i, MPI_COMM_WORLD);
-								//printf("error = %d\n", error);
 						}
 				}
 		}
@@ -58,7 +53,6 @@ int ** floyd(int n, int **original){
 		for (i = 0; i < grid_size; i++){
 				MPI_Recv(&buf[i][0], grid_size, MPI_INT, 0, i, MPI_COMM_WORLD, &status);
 		}
-		//printf("data distributed\n");
 		//
 		// each process enters into the while loop, run the loop for n times
 		k = 0;
@@ -85,15 +79,15 @@ int ** floyd(int n, int **original){
 						}
 				}
 				MPI_Bcast(vert_buff, grid_size, MPI_INT, si, row_comm);
-
+				
 				// Calculate the minimum value and update the element i and j
+				omp_set_num_threads(grid_size);
 				#pragma omp parallel for
 				for ( i = 0 ; i < grid_size ; i++){
 						for (j = 0; j < grid_size; j++){
 								buf[i][j] = min(buf[i][j], safesum(vert_buff[i], horz_buff[j]));
 						}
 				}
-				//printf("calculating the min value for %d iteration\n",k);
 				k++;
 		}
 
@@ -101,7 +95,6 @@ int ** floyd(int n, int **original){
 		printMatrix(buf, grid_size);
 
 		
-		//printf("finishes n iterations and sending back the data\n");
 		// collect the data from all processes and return it.
 		// every process will send the data in sub matrix row by row.
 		for (i = 0; i < grid_size; i++){

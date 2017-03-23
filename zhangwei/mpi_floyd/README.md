@@ -12,7 +12,7 @@ Permitted by Dr. Zhuang, the due date is changed to Nov 2nd, 2015, before 12.00p
 
 In this project, we were required to parallelize the Floyd algorithm to
 calculate all the shortest paths between every two-paired nodes of a graph (by
-using the graph's adjacency matrix which is a `N*N` matrix (N is the number
+using the graph's adjacency matrix which is a $`N\timesN`$ matrix (N is the number
 of the nodes of that graph))
 
 There are several different method to parallelize Floyd algorithm:
@@ -23,7 +23,7 @@ row by row. The master process (i.e. `rank_0`) send the required chunk of data
 every processes. Each process calculate the Floyd algorithm for its corresponding 
 chunk of data and after all, send the updated data back to the master process to 
 be merged and be printed in the output. In this method of parallelizing we have 
-to achieve the time complexity of `O(n^2log(p))`
+to achieve the time complexity of $`\mathcal{O}(n^2log\mathcal{P})`$ .
 
 2nd Method, Grid-Based Method: In this method, we will parallelize the matrix
 in like a grid (i.e. three by three). The master process (i.e. `rank_0`) send 
@@ -32,11 +32,12 @@ and other necessary data) to every processes. Each process calculate the Floyd
 algorithm for its corresponding chunk of data and after all, send the updated 
 data back to the master process to be merged and be printed in the output. 
 In this method of parallelizing we have to achieve the time complexity of 
-$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\mathcal{P})`$ and we actually achieved the time complexity of .
+$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\mathcal{P})`$ and we actually achieved the 
+time complexity of $`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\sqrt{P})`$.
 
-$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\sqrt{P})`$
 
-$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\mathcal{P})`$
+
+
 
 ## Overview of Algorithm 
 For this assignment we decide using Grid-base Method to parallelize the Floyd 
@@ -44,13 +45,13 @@ algorithm.  For this purpose, first of all, We have to check the dimension of
 the adjacency matrix to see if it is divisable by root square of P (P
 is the number of the processes). Then the `rank_0` process have to send to every
 process their corresponding chunk of data which is a sub-matrix of adjacency
-matrix. The size of each sub-matrix is calculated by `N/sqrt(P)`(which we call 
+matrix. The size of each sub-matrix is calculated by $`N/\sqrt{P}`$ (which we call 
 it the grid-size). Since every process need the data from the last iteration while updating
 the value of there own sub-matrix, it's better to have a copy of their sub-matrix. However, having 
 observed that only the data in `k`th column and `k`th row should be cached for calculating and updating 
 the value, to be more memory efficient, we only provide all precesses with the coresponding part of the
 `k`th row and `k`th column. The process which contains the current `k`th row or `k`th column, 
-have to broadcast the `sqrt(P)` parts of the data vertically or horizantally. To do this we
+have to broadcast the $`\sqrt{P}`$ parts of the data vertically or horizantally. To do this we
 used `MPI_Comm_split()` function to clolorized the horizental and verticall groups of
 processes. 
 ```

@@ -32,8 +32,8 @@ and other necessary data) to every processes. Each process calculate the Floyd
 algorithm for its corresponding chunk of data and after all, send the updated 
 data back to the master process to be merged and be printed in the output. 
 In this method of parallelizing we have to achieve the time complexity of 
-$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\mathcal{P})`$ and we actually achieved the 
-time complexity of $`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log\sqrt{P})`$.
+$`\mathcal{O}(\frac{n^2}{\sqrt{P}} \times log\mathcal{P})`$ and we actually achieved the 
+time complexity of $`\mathcal{O}(\frac{n^2}{\sqrt{P}} \times log\sqrt{P})`$.
 
 
 
@@ -45,7 +45,7 @@ algorithm.  For this purpose, first of all, We have to check the dimension of
 the adjacency matrix to see if it is divisable by root square of P (P
 is the number of the processes). Then the `rank_0` process have to send to every
 process their corresponding chunk of data which is a sub-matrix of adjacency
-matrix. The size of each sub-matrix is calculated by $`N/\sqrt{P}`$ (which we call 
+matrix. The size of each sub-matrix is calculated by $`\frac{N}{\sqrt{P}}`$ (which we call 
 it the grid-size). Since every process need the data from the last iteration while updating
 the value of there own sub-matrix, it's better to have a copy of their sub-matrix. However, having 
 observed that only the data in `k`th column and `k`th row should be cached for calculating and updating 

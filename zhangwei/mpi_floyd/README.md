@@ -12,7 +12,7 @@ Permitted by Dr. Zhuang, the due date is changed to Nov 2nd, 2015, before 12.00p
 
 In this project, we were required to parallelize the Floyd algorithm to
 calculate all the shortest paths between every two-paired nodes of a graph (by
-using the graph's adjacency matrix which is a $`N\timeN`$ matrix (N is the number
+using the graph's adjacency matrix which is a $`N \times N`$ matrix (N is the number
 of the nodes of that graph))
 
 There are several different method to parallelize Floyd algorithm:
@@ -147,7 +147,7 @@ make run NUM=p ARGS="-msize n"
 - Note: here, argument **NUM** here is used to specify the number of processes,
 **p** here must be a perfect square number. 
 - `-msize` is for specifying the matrix size. n should be divisible by $`\sqrt{P}`$,
-  and the matrix size is going to be $`n\timen`$;
+  and the matrix size is going to be $`n \times n`$;
 
 Here are some simple test cases:
 ```

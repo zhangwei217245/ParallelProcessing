@@ -32,7 +32,7 @@ and other necessary data) to every processes. Each process calculate the Floyd
 algorithm for its corresponding chunk of data and after all, send the updated 
 data back to the master process to be merged and be printed in the output. 
 In this method of parallelizing we have to achieve the time complexity of 
-$`O(n^2/\sqrt(P)\*log(p))`$ and we achieve the time complexity of `O(n^2/sqrt(P)\*log[sqrt(P)])`.
+$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log(p))`$ and we achieve the time complexity of $`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log(\sqrt{P})})`$.
 
 $`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log(p))`$
 

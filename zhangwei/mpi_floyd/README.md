@@ -146,8 +146,8 @@ make run NUM=p ARGS="-msize n"
 
 - Note: here, argument **NUM** here is used to specify the number of processes,
 **p** here must be a perfect square number. 
-- `-msize` is for specifying the matrix size. n should be divisible by sqrt(p),
-  and the matrix size is going to be n\*n;
+- `-msize` is for specifying the matrix size. n should be divisible by $`\sqrt{P}`$,
+  and the matrix size is going to be $`n\timen`$;
 
 Here are some simple test cases:
 ```

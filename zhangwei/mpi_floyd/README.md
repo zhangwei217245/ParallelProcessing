@@ -34,7 +34,7 @@ data back to the master process to be merged and be printed in the output.
 In this method of parallelizing we have to achieve the time complexity of 
 $`O(n^2/\sqrt(P)\*log(p))`$ and we achieve the time complexity of `O(n^2/sqrt(P)\*log[sqrt(P)])`.
 
-$`O(n^2/\sqrt(P)\*log(p))`$
+$`\mathcal{O}(\frac{n^2}{\sqrt{P}}*log(p))`$
 
 ## Overview of Algorithm 
 For this assignment we decide using Grid-base Method to parallelize the Floyd 

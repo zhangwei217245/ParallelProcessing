@@ -12,7 +12,7 @@ Permitted by Dr. Zhuang, the due date is changed to Nov 2nd, 2015, before 12.00p
 
 In this project, we were required to parallelize the Floyd algorithm to
 calculate all the shortest paths between every two-paired nodes of a graph (by
-using the graph's adjacency matrix which is a $`N\timesN`$ matrix (N is the number
+using the graph's adjacency matrix which is a $`N\timeN`$ matrix (N is the number
 of the nodes of that graph))
 
 There are several different method to parallelize Floyd algorithm:
